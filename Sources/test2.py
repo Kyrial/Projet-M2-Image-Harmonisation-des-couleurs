@@ -19,9 +19,12 @@ verbosePourcent.pourcent=0
 
 #somme l'occurance des pixel voisin de la couleur courante
 def sommeVoisine(histo,color):
+    distanceVoisin = 3
+    voisins = range(-distanceVoisin, distanceVoisin)
+    
     somme = 0
     #Parourt les 8 voisins de color
-    for b, g, r in zip(range(-1,1),range(-1,1),range(-1,1)):
+    for b, g, r in zip(voisins,voisins, voisins):
         colorV = (color[0] + b, color[1] + g, color[2] + r)
         if colorV in histo.keys():
            somme += histo[colorV]
@@ -34,7 +37,15 @@ def distance(color, couleur):
                     pow(color[1] - couleur[1], 2) +
                     pow(color[2] - couleur[2], 2));
     return dist
+def distanceComp(color, couleur, comp):
+    dist = abs(color[comp] - couleur[comp]);
+    return dist
 
+def ifMilieux(isMid, color2, color3, k):
+    if (color2[k] > isMid[k] and isMid[k] > color3[k]) or (color2[k] < isMid[k] and isMid[k] < color3[k]):
+        return True
+    else: return False
+    
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
 def findBestHarmonieCompl(histo, img, verbose = True):
@@ -62,28 +73,53 @@ def findBestHarmonieCompl(histo, img, verbose = True):
 
     print("couleur :        ", mode[0])
     print("complémentaire : ", modeCompl)
-    
+    print("nbOcc : ", mode[1])    
     #on harmonise les couleur de l'image
     for i in range(0,img.shape[0]):
         for j in range(0,img.shape[1]):
             #calcul de la distance entre le mode et le complémentaire
+            """
             distColor = distance(mode[0], img[i,j])
             distCompl = distance(modeCompl, img[i,j])
-            if distColor < distCompl:                                
+            if distColor < distCompl:
                 color = mode[0]
                 dist = distColor
             else:
                 color = modeCompl
                 dist = distCompl
-
+            """
            
-            #plusieur choix de fonction possible ? sqrt ?
-            #formule =  pow(dist,2)-1
-            formule = math.sqrt(dist)
 
             #on modifie les pixel courant 
             for k in range(3):
+
+                distColor = distanceComp(mode[0], img[i,j],k)
+                distCompl = distanceComp(modeCompl, img[i,j],k)
+                if distColor < distCompl:
+                    color = mode[0]
+                    #dist = distColor
+                else:
+                    color = modeCompl
+                    #dist = distCompl
+
+                
+                dist = distanceComp(color, img[i,j], k)
+                
+                    #plusieur choix de fonction possible ? sqrt ?
+                #formule =  min(math.exp(dist/15)-1,20)
+                #formule = math.sqrt(dist)
+                #formule = max(0,math.floor(25/(1+math.exp(-(dist-70)/8))-1 ))   #sigmoïde
+                #formule =  min(math.exp(dist/15)-1,2)
+                pivot =distanceComp(mode[0], modeCompl,k)/4
+                if dist<pivot:
+                    formule = dist/2
+                if(dist>pivot and not ifMilieux(img[i,j],mode[0],modeCompl,k)):
+                    formule = pivot/2
+                else:
+                    formule = (pivot/2)-dist/2
+                formule = min(60,max(0,math.floor(formule)))                
                 if color[k] > img[i,j][k]:
+          
                     img.itemset((i,j,k), img.item(i,j,k)+formule)
                 else:
                     img.itemset((i,j,k), img.item(i,j,k)-formule)
@@ -92,17 +128,16 @@ def findBestHarmonieCompl(histo, img, verbose = True):
 
 #### ATTENTION: ####
 # OPENCV utilise le format BGR (bleu, vert, rouge)
-# pensez a rectifié si nécessaire pour les calculs
+# pensez a rectifier si nécessaire pour les calculs
 ####
 
-
-img = cv2.imread ("../Images/Inputs/cat3.jpg")
+filename = "chat3"
+img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
 
 histo = {}
-
 #parcours de l'image pour remplir l'histogramme
 for i in range(0,img.shape[0]):
     for j in range(0,img.shape[1]):
@@ -112,13 +147,10 @@ for i in range(0,img.shape[0]):
             histo[tuple (pixel)] = histo[tuple (pixel)]+ 1
         else:
             histo[tuple(pixel)] = 1
-
-
-
+            
 
 findBestHarmonieCompl(histo, img)
-
-cv2.imwrite("../Images/Outputs/cat3_palette.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"_palette.jpg", img)
 
 
 
