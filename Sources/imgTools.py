@@ -46,6 +46,18 @@ def ifMilieux(isMid, color2, color3, k):
         return True
     else: return False
 
+def getHisto(img):
+    histo = {}
+    #parcours de l'image pour remplir l'histogramme
+    for i in range(0,img.shape[0]):
+        for j in range(0,img.shape[1]):
+            pixel = img[i,j]
+            
+            if tuple(pixel) in histo.keys():
+                histo[tuple (pixel)] = histo[tuple (pixel)]+ 1
+            else:
+                histo[tuple(pixel)] = 1
+    return histo
 
 
 

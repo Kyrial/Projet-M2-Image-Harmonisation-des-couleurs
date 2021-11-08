@@ -82,87 +82,6 @@ def findBestHarmonieCompl(histo, img, verbose = True):
             
 
 
-#trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieTriad(histo, img, verbose = True):
-    #le mode correspond a un p
-    #mode = couleur, occurance 
-    mode = (0,0)
-
-    ite = 0
-    for key, value in histo.items():
-        ite+=1
-        color = list(key)
-      #  print(color)
-        #calcul de la couleur complémentaire
-        colorTriad1 = [color[2],color[0],color[1]]
-        colorTriad2 = [color[1],color[2],color[0]]
-        #on prend en compte aussi les voisines
-        somme =sommeVoisine(histo,color) + sommeVoisine(histo, colorTriad1) + sommeVoisine(histo, colorTriad2)
-
-        if somme > mode[1]:
-            mode = (color, somme)
-        if verbose:
-            verbosePourcent(ite, len(histo))
-       # print("de la recherche de la meilleurs harmonie")
-    modeTriad1 = [mode[0][2],mode[0][0],mode[0][1]]
-    modeTriad2 = [mode[0][1],mode[0][2],mode[0][0]]
-    print("couleur :        ", mode[0])
-    print("triadique 1 : ", modeTriad1)
-    print("triadique 1 : ", modeTriad2)
-    print("nbOcc : ", mode[1])    
-    #on harmonise les couleur de l'image
-    for i in range(0,img.shape[0]):
-        for j in range(0,img.shape[1]):
-            #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant 
-            distColor = distance(mode[0], img[i,j])
-            distTriad1 = distance(modeTriad1, img[i,j])
-            distTriad2 = distance(modeTriad2, img[i,j])
-            
-            if distColor < distTriad2 and distColor < distTriad1:
-                color = mode[0]
-                dist = distColor
-            elif distTriad1 <distTriad2:
-                color = modeTriad1
-                dist = distTriad1
-            else:
-                color = modeTriad2
-                dist = distTriad2                
-            
-            
-            for k in range(3):
-                """
-                distColor = distanceComp(mode[0], img[i,j],k)
-                distCompl = distanceComp(modeCompl, img[i,j],k)
-                if distColor < distCompl:
-                    color = mode[0]
-                    #dist = distColor
-                else:
-                    color = modeCompl
-                    #dist = distCompl 
-                """
-                dist = distanceComp(color, img[i,j], k)
-                
-                    #plusieur choix de fonction possible ? sqrt ?
-                #formule =  min(math.exp(dist/15)-1,20)
-                #formule = math.sqrt(dist)
-                #formule = max(0,math.floor(25/(1+math.exp(-(dist-70)/8))-1 ))   #sigmoïde
-                #formule =  min(math.exp(dist/15)-1,2)
-                pivot =distanceComp(mode[0], modeTriad1,k)/4
-                if dist<pivot:
-                    formule = dist/2
-                if(dist>pivot and not ifMilieux(img[i,j],mode[0],modeTriad1,k)):
-                    formule = pivot/2
-                else:
-                    formule = (pivot/2)-dist/2
-                formule = min(60,max(0,math.floor(formule)))                
-                if color[k] > img[i,j][k]:
-          
-                    img.itemset((i,j,k), img.item(i,j,k)+formule)
-                else:
-                    img.itemset((i,j,k), img.item(i,j,k)-formule)
-
-
 
 #### ATTENTION: ####
 # OPENCV utilise le format BGR (bleu, vert, rouge)
@@ -175,22 +94,13 @@ ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
 
-histo = {}
-#parcours de l'image pour remplir l'histogramme
-for i in range(0,img.shape[0]):
-    for j in range(0,img.shape[1]):
-        pixel = img[i,j]
-        
-        if tuple(pixel) in histo.keys():
-            histo[tuple (pixel)] = histo[tuple (pixel)]+ 1
-        else:
-            histo[tuple(pixel)] = 1
+histo = getHisto(img)
             
 
-#findBestHarmonieCompl(histo, img)
-findBestHarmonieTriad(histo, img)
+findBestHarmonieCompl(histo, img)
+#findBestHarmonieTriad(histo, img)
 
-cv2.imwrite("../Images/Outputs/"+filename+"_palette.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"_Compl.jpg", img)
 
 
 
