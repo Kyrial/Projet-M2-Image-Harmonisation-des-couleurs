@@ -8,4 +8,5 @@ python 3.7.12
 pip install opencv-python
 pip install tensorflow==2.0
 pip install pillow
+pip install matplotlib
 
