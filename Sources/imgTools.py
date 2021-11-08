@@ -18,8 +18,8 @@ verbosePourcent.pourcent=0
 
 
 #somme l'occurance des pixel voisin de la couleur courante
-def sommeVoisine(histo,color):
-    distanceVoisin = 3
+def sommeVoisine(histo,color, distanceVoisin = 3):
+    #distanceVoisin = 3
     voisins = range(-distanceVoisin, distanceVoisin)
     
     somme = 0
