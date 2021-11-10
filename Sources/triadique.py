@@ -4,86 +4,51 @@ import math
 from imgTools import *
 
 
-
 #trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieTriad(histo, img, verbose = True):
+def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
-
     ite = 0
-    for key, value in histo.items():
+    for key, value in histoHSV.items():
         ite+=1
-        color = list(key)
+        color = key #teinte de la couleur
       #  print(color)
-        #calcul de la couleur complémentaire
-        colorTriad1 = [color[2],color[0],color[1]]
-        colorTriad2 = [color[1],color[2],color[0]]
+        #calcul des couleurs triadique
+        colort1 = (color+60)%180
+        colort2 = (color+120)%180
         #on prend en compte aussi les voisines
-        somme =sommeVoisine(histo,color) + sommeVoisine(histo, colorTriad1) + sommeVoisine(histo, colorTriad2)
+        #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
+        somme = sommeVoisinHSV(histoHSV, color)+ sommeVoisinHSV(histoHSV, colort1)+sommeVoisinHSV(histoHSV, colort2)
 
         if somme > mode[1]:
             mode = (color, somme)
         if verbose:
-            verbosePourcent(ite, len(histo))
-       # print("de la recherche de la meilleurs harmonie")
-    modeTriad1 = [mode[0][2],mode[0][0],mode[0][1]]
-    modeTriad2 = [mode[0][1],mode[0][2],mode[0][0]]
-    print("couleur :        ", mode[0])
-    print("triadique 1 : ", modeTriad1)
-    print("triadique 1 : ", modeTriad2)
-    print("nbOcc : ", mode[1])    
+            verbosePourcent(ite, len(histoHSV))
+
+    modet1 =  (mode[0]+60)%180
+    modet2 =  (mode[0]+120)%180
+    print("mode = ",mode[0])
+    print("t1 = ", modet1)
+    print("t2 = ", modet2)
     #on harmonise les couleur de l'image
-    for i in range(0,img.shape[0]):
-        for j in range(0,img.shape[1]):
+    for i in range(0,imgHSV.shape[0]):
+        for j in range(0,imgHSV.shape[1]):
             #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant 
-            distColor = distance(mode[0], img[i,j])
-            distTriad1 = distance(modeTriad1, img[i,j])
-            distTriad2 = distance(modeTriad2, img[i,j])
-            
-            if distColor < distTriad2 and distColor < distTriad1:
-                color = mode[0]
-                dist = distColor
-            elif distTriad1 <distTriad2:
-                color = modeTriad1
-                dist = distTriad1
+            #on modifie les pixel courant        
+            distColor = abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
+            dist1 = abs(modet1-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            dist2 = abs(modet2-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            if distColor < dist1 <= dist2 or distColor < dist2 <= dist1:
+
+                imgHSV.itemset((i,j,0),mode[0])
+            elif dist1 < dist2 :
+
+                imgHSV.itemset((i,j,0),modet1)
             else:
-                color = modeTriad2
-                dist = distTriad2                
+
+                imgHSV.itemset((i,j,0),modet2)
             
-            
-            for k in range(3):
-                """
-                distColor = distanceComp(mode[0], img[i,j],k)
-                distCompl = distanceComp(modeCompl, img[i,j],k)
-                if distColor < distCompl:
-                    color = mode[0]
-                    #dist = distColor
-                else:
-                    color = modeCompl
-                    #dist = distCompl 
-                """
-                dist = distanceComp(color, img[i,j], k)
-                
-                    #plusieur choix de fonction possible ? sqrt ?
-                #formule =  min(math.exp(dist/15)-1,20)
-                #formule = math.sqrt(dist)
-                #formule = max(0,math.floor(25/(1+math.exp(-(dist-70)/8))-1 ))   #sigmoïde
-                #formule =  min(math.exp(dist/15)-1,2)
-                pivot =distanceComp(mode[0], modeTriad1,k)/4
-                if dist<pivot:
-                    formule = dist/2
-                if(dist>pivot and not ifMilieux(img[i,j],mode[0],modeTriad1,k)):
-                    formule = pivot/2
-                else:
-                    formule = (pivot/2)-dist/2
-                formule = min(60,max(0,math.floor(formule)))                
-                if color[k] > img[i,j][k]:
-          
-                    img.itemset((i,j,k), img.item(i,j,k)+formule)
-                else:
-                    img.itemset((i,j,k), img.item(i,j,k)-formule)
 
 
 
@@ -94,27 +59,23 @@ def findBestHarmonieTriad(histo, img, verbose = True):
 
 filename = "cat3"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
-ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
-
-histo = getHisto(img)
-     
-
-#findBestHarmonieCompl(histo, img)
-findBestHarmonieTriad(histo, img)
-
-cv2.imwrite("../Images/Outputs/"+filename+"_Triadique.jpg", img)
+histoHSV = getHistoHSV(img)
 
 
+hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-                
-#for key, value in histo.items():
- #   if value >100:
-  #      print(key[2], '    ', value)
+#print("couleur   : ",hsvImage[0,0])
+#print("couleur   : ",hsvImage[0,0])
 
+findBestHarmonieCompl(histoHSV, hsvImage)
+#findBestHarmonieTriad(histo, img)
 
-
+img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_TriadiqueHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique.jpg", img)
 
 
 
@@ -123,52 +84,3 @@ cv2.imwrite("../Images/Outputs/"+filename+"_Triadique.jpg", img)
 
 
 
-
-
-#print(len(histo));
-#print("miaou")
-#print(img.shape);
-#cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-#cv2.imshow('image',img)
-
-
-
-
-
-
-
-
-
-
-
-#for i in range(0,img.shape[0]):
-#    for j in range(0,img.shape[1]):
-#        pixel = img[i, j];
-#        pixel = img.item(i, j,0)
-#        print (pixel)
-
-
-#img.itemset((50, 50, 1), 25)
-
-
-"""
-import cv2 as cv
-import numpy as np
-from matplotlib import pyplot as plt
-img=cv.imread ("fleur.png");
-#RGB -> HSV.
-hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-#Déclaration des couleurs des courbes
-color = ('r','g','b')
-#Déclaration des noms des courbes.
-labels = ('h','s','v')
-#Pour col allant r à b et pour i allant de 0 au nombre de couleurs
-for i,col in enumerate(color):
-    #Hist prend la valeur de l'histogramme de hsv sur la canal i.
-    hist = cv.calcHist([hsv],[i],None,[256],[0,256])
-    # Plot de hist.
-    plt.plot(hist,color = col,label=labels[i])
-    plt.xlim([0,256])
-#Affichage.
-plt.show()
-"""

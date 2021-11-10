@@ -47,8 +47,8 @@ histo = getHisto(img)
 #findBestHarmonieCompl(histo, img)
 findBestHarmonieMono(histo, img, [255,0,255])
 
-cv2.imwrite("../Images/Outputs/"+filename+"_MonoMono.jpg", img)
-
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_monoHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_mono.jpg", img)
 
 
 

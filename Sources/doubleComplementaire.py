@@ -76,6 +76,6 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"_dcHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"_dc.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleComplHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleCompl.jpg", img)
 

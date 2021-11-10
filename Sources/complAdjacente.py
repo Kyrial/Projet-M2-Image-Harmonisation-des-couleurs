@@ -85,4 +85,4 @@ findBestHarmonieComplAdj(histoHSV, hsvImage)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_complAdjHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_complAdjHSV.jpg", img)
