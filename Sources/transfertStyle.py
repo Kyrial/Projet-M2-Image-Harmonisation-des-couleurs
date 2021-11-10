@@ -9,11 +9,11 @@ from tensorflow import keras
 from tensorflow.keras.applications import vgg19
 print("module chargé")
 
-filename = "yo"
-styleName = "styleMulticolore"
+filename = "tulipes"
+styleName = "mur"
 #styleName = "nuage"
 #styleName = "nuit-etoilee"
-outputPath = "../Images/Outputs/transfert_de_style/bg/"
+outputPath = "../Images/Outputs/transfert_de_style/mur/"
 
 
 #image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
@@ -35,8 +35,8 @@ content_weight = 2.5e-8
 width, height = keras.preprocessing.image.load_img(image_path).size
 #img_nrows = 400
 #img_ncols = int(width * img_nrows / height)
-img_nrows = width
-img_ncols = height
+img_nrows = height
+img_ncols = width 
 
 
 
