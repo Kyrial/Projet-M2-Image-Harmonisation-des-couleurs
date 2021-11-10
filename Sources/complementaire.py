@@ -5,80 +5,44 @@ from imgTools import *
 
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieCompl(histo, img, verbose = True):
+def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
-
     ite = 0
-    for key, value in histo.items():
+    for key, value in histoHSV.items():
         ite+=1
-        color = list(key)
+        color = key #teinte de la couleur
       #  print(color)
         #calcul de la couleur complémentaire
-        colorCompl = [abs(255-color[0]),abs(255-color[1]),abs(255-color[2])]
-                
+        colorCompl = 255-color
         #on prend en compte aussi les voisines
-        somme =sommeVoisine(histo,color) + sommeVoisine(histo, colorCompl)
+        #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
+        somme = sommeVoisinHSV(histoHSV, color)+ sommeVoisinHSV(histoHSV, colorCompl)
 
         if somme > mode[1]:
             mode = (color, somme)
         if verbose:
-            verbosePourcent(ite, len(histo))
-       # print("de la recherche de la meilleurs harmonie")
-    modeCompl = [abs(255-mode[0][0]),abs(255-mode[0][1]),abs(255-mode[0][2])]
+            verbosePourcent(ite, len(histoHSV))
+
+    modeCompl =  255-color
 
     print("couleur :        ", mode[0])
     print("complémentaire : ", modeCompl)
-    print("nbOcc : ", mode[1])    
+    print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
-    for i in range(0,img.shape[0]):
-        for j in range(0,img.shape[1]):
+    for i in range(0,imgHSV.shape[0]):
+        for j in range(0,imgHSV.shape[1]):
             #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant
-
-        
-            distColor = distance(mode[0], img[i,j])
-            distCompl = distance(modeCompl, img[i,j])
+            #on modifie les pixel courant        
+            distColor = abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
+            distCompl = abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
             if distColor < distCompl:
-                color = mode[0]
-                dist = distColor
+
+                imgHSV.itemset((i,j,0),mode[0])
             else:
-                color = modeCompl
-                dist = distCompl
-            
-            
-            for k in range(3):
-                """
-                distColor = distanceComp(mode[0], img[i,j],k)
-                distCompl = distanceComp(modeCompl, img[i,j],k)
-                if distColor < distCompl:
-                    color = mode[0]
-                    #dist = distColor
-                else:
-                    color = modeCompl
-                    #dist = distCompl 
-                """
-                dist = distanceComp(color, img[i,j], k)
-                
-                    #plusieur choix de fonction possible ? sqrt ?
-                #formule =  min(math.exp(dist/15)-1,20)
-                #formule = math.sqrt(dist)
-                #formule = max(0,math.floor(25/(1+math.exp(-(dist-70)/8))-1 ))   #sigmoïde
-                #formule =  min(math.exp(dist/15)-1,2)
-                pivot =distanceComp(mode[0], modeCompl,k)/4
-                if dist<pivot:
-                    formule = dist/2
-                if(dist>pivot and not ifMilieux(img[i,j],mode[0],modeCompl,k)):
-                    formule = pivot/2
-                else:
-                    formule = (pivot/2)-dist/2
-                formule = min(60,max(0,math.floor(formule)))                
-                if color[k] > img[i,j][k]:
-          
-                    img.itemset((i,j,k), img.item(i,j,k)+formule)
-                else:
-                    img.itemset((i,j,k), img.item(i,j,k)-formule)
+
+                imgHSV.itemset((i,j,0),modeCompl)
             
 
 
@@ -90,16 +54,22 @@ def findBestHarmonieCompl(histo, img, verbose = True):
 
 filename = "cat3"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
-ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
+histoHSV = getHistoHSV(img)
 
-histo = getHisto(img)
-            
 
-findBestHarmonieCompl(histo, img)
+hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+#print("couleur   : ",hsvImage[0,0])
+#print("couleur   : ",hsvImage[0,0])
+
+findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
+img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
+cv2.imwrite("../Images/Outputs/"+filename+"_ComplHSV.jpg", hsvImage)
 cv2.imwrite("../Images/Outputs/"+filename+"_Compl.jpg", img)
 
 

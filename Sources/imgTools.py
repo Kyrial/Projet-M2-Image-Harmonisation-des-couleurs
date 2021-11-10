@@ -38,7 +38,7 @@ def distance(color, couleur):
                     pow(color[2] - couleur[2], 2));
     return dist
 def distanceComp(color, couleur, comp):
-    dist = abs(color[comp] - couleur[comp]);
+    dist = abs(color[comp] - couleur[comp])
     return dist
 
 def ifMilieux(isMid, color2, color3, k):
@@ -59,6 +59,23 @@ def getHisto(img):
                 histo[tuple(pixel)] = 1
     return histo
 
+def getHistoHSV(img):
+    histo = {}
+    hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    for i in range(0,hsvImage.shape[0]):
+        for j in range(0,hsvImage.shape[1]):
+            pixel = hsvImage[i,j]
+            if pixel[0] in histo.keys():
+                histo[pixel[0]] = histo[pixel[0]]+ 1
+            else:
+                histo[pixel[0]] = 1
+    return histo
+
+def sommeVoisinHSV(histoHSV, teinte):
+    somme = 0;
+    if teinte in histoHSV.keys():
+        somme = somme + histoHSV[teinte]
+    return somme;
 
 
 
