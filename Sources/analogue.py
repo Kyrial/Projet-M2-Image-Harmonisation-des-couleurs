@@ -58,7 +58,7 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
 ####
 
 #filename = "cat3"
-filename = "tulipes"
+filename = "fleurs"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
