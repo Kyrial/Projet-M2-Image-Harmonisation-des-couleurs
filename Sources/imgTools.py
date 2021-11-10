@@ -77,6 +77,8 @@ def sommeVoisinHSV(histoHSV, teinte):
         somme = somme + histoHSV[teinte]
     return somme;
 
-
+# Different applications use different scales for HSV. 
+#For example gimp uses H = 0-360, S = 0-100 and V = 0-100. 
+#But OpenCV uses H: 0-179, S: 0-255, V: 0-255
 
 

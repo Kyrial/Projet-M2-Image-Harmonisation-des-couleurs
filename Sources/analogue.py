@@ -5,7 +5,8 @@ from imgTools import *
 
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
+def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
+    ecart = 10
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
@@ -15,20 +16,23 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
         color = key #teinte de la couleur
       #  print(color)
         #calcul de la couleur complémentaire
-        colorCompl = (color+90)%180
+        colorA = (color-ecart)%180
+        colorB = (color+ecart)%180
         #on prend en compte aussi les voisines
         #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
-        somme = sommeVoisinHSV(histoHSV, color)+ sommeVoisinHSV(histoHSV, colorCompl)
+        somme = sommeVoisinHSV(histoHSV, colorA)+ sommeVoisinHSV(histoHSV, colorB)+ sommeVoisinHSV(histoHSV, colorA)
 
         if somme > mode[1]:
             mode = (color, somme)
         if verbose:
             verbosePourcent(ite, len(histoHSV))
 
-    modeCompl =  (mode[0]+90)%180
+        modecolorA = (mode[0]-ecart)%180
+        modecolorB = (mode[0]+ecart)%180
 
     print("couleur :        ", mode[0])
-    print("complémentaire : ", modeCompl)
+    print("analogue1 : ", modecolorA)
+    print("analogue2 : ", modecolorB)
     print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
@@ -36,13 +40,14 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
             #calcul de la distance entre le mode et le complémentaire
             #on modifie les pixel courant        
             distColor = abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
-            distCompl = abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            if distColor < distCompl:
+            distcolorA = abs(modecolorA-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            distcolorB = abs(modecolorB-imgHSV[i,j][0])
 
-                imgHSV.itemset((i,j,0),mode[0])
-            else:
-
-                imgHSV.itemset((i,j,0),modeCompl)
+            if not(distcolorA <ecart and distcolorB<ecart):
+                if distcolorA < distcolorB:
+                    imgHSV.itemset((i,j,0),modecolorA)
+                else:
+                    imgHSV.itemset((i,j,0),modecolorB)
             
 
 
@@ -72,12 +77,12 @@ for i in range(0,hsvImage.shape[0]):
 print("max teinte   : ",max ,"\n\n\n")
 #print("couleur   : ",hsvImage[0,0])
 
-findBestHarmonieCompl(histoHSV, hsvImage)
+findBestHarmonieAnalogue(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"_ComplHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"_Compl.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"_AnalogueHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"_Analogue.jpg", img)
 
 
 
