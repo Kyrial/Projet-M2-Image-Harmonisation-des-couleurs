@@ -20,7 +20,7 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
         colorB = (color+ecart)%180
         #on prend en compte aussi les voisines
         #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
-        somme = sommeVoisinHSV(histoHSV, colorA)+ sommeVoisinHSV(histoHSV, colorB)+ sommeVoisinHSV(histoHSV, colorA)
+        somme = sommeVoisinHSV(histoHSV, color)+ sommeVoisinHSV(histoHSV, colorB)+ sommeVoisinHSV(histoHSV, colorA)
 
         if somme > mode[1]:
             mode = (color, somme)
@@ -81,8 +81,8 @@ findBestHarmonieAnalogue(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"_AnalogueHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"_Analogue.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_AnalogueHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue.jpg", img)
 
 
 

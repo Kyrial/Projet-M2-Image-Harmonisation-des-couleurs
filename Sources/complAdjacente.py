@@ -6,7 +6,7 @@ from imgTools import *
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
 def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
-    ecart = 0
+    ecart = 10
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
@@ -20,7 +20,7 @@ def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
         colorB = (color+90+ecart)%180
         #on prend en compte aussi les voisines
         #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
-        somme = sommeVoisinHSV(histoHSV, colorA)+ sommeVoisinHSV(histoHSV, colorB)+ sommeVoisinHSV(histoHSV, colorA)
+        somme = sommeVoisinHSV(histoHSV, color) # + sommeVoisinHSV(histoHSV, colorB)+ sommeVoisinHSV(histoHSV, colorA)
 
         if somme > mode[1]:
             mode = (color, somme)
@@ -49,6 +49,7 @@ def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
             elif distcolorB < min(distcolorA,distColor):
                 imgHSV.itemset((i,j,0),modecolorB)
             else:
+                
                 imgHSV.itemset((i,j,0),mode[0])
             
 
@@ -83,5 +84,5 @@ findBestHarmonieComplAdj(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"_complAdjHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"_complAdj.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_complAdjHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue.jpg", img)
