@@ -35,10 +35,9 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
         for j in range(0,imgHSV.shape[1]):
             #calcul de la distance entre le mode et le complémentaire
             #on modifie les pixel courant        
-            distColor = abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
-            distCompl = abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            distColor = distModulo(mode[0],imgHSV[i,j][0], 179)    # abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
+            distCompl = distModulo(modeCompl,imgHSV[i,j][0], 179)    # abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
             if distColor < distCompl:
-
                 imgHSV.itemset((i,j,0),mode[0])
             else:
 
@@ -76,7 +75,7 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_ComplHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_ComplHSV_modulo.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl_modulo.jpg", img)
 
 

@@ -131,10 +131,10 @@ def chooseColor(tupleTeinte,pixelHSV):
     
     if dist_inf < dist_sup:
         formule = dist_inf/2
-        return (pixel[0] -formule) %179
+        return (pixelHSV[0] -formule) %179
     else:
         formule = dist_sup/2
-        return (pixel[0] + formule) %179
+        return (pixelHSV[0] + formule) %179
     
 
     """
@@ -146,5 +146,17 @@ def chooseColor(tupleTeinte,pixelHSV):
         if dist>distpivot//2:
             formule = (pivot/2)-dist/2
     """
+
+
+"""
+distColor = mode[0]-imgHSV[i,j][0]# distanceComp(mode[0], img[i,j],0)
+            distCompl = modeCompl-imgHSV[i,j][0] #distanceComp(modeCompl, img[i,j],0)
+            if abs(distColor) < abs(distCompl):
+
+                imgHSV.itemset((i,j,0),mode[0]*(distColor/45) + (imgHSV[i,j][0]*(1-distColor/45)))
+            else:
+
+                imgHSV.itemset((i,j,0),modeCompl*(distCompl/45)+ (imgHSV[i,j][0]*(1-distCompl/45)))
+"""
     
 
