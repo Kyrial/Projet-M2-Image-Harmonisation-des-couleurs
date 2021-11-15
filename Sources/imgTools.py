@@ -85,6 +85,10 @@ def distModulo(val1, val2, maxVal):
     dist = abs(val1 - val2)
     return min(dist , maxVal- dist)
 
+def distModulo_WithoutAbs(val1, val2, maxVal):
+    dist = abs(val1 - val2)
+    return min(dist , maxVal- dist) if val1 - val2 >= 0 else -min(dist , maxVal- dist)
+
 
 def getDistofTuple(tupleTeinte, pixelHSV,):
     teinte = 255
@@ -149,8 +153,8 @@ def chooseColor(tupleTeinte,pixelHSV):
 
 
 """
-distColor = mode[0]-imgHSV[i,j][0]# distanceComp(mode[0], img[i,j],0)
-            distCompl = modeCompl-imgHSV[i,j][0] #distanceComp(modeCompl, img[i,j],0)
+distColor = mode[0]-imgHSV[i,j][0]
+distCompl = modeCompl-imgHSV[i,j][0]
             if abs(distColor) < abs(distCompl):
 
                 imgHSV.itemset((i,j,0),mode[0]*(distColor/45) + (imgHSV[i,j][0]*(1-distColor/45)))
