@@ -81,4 +81,70 @@ def sommeVoisinHSV(histoHSV, teinte):
 #For example gimp uses H = 0-360, S = 0-100 and V = 0-100. 
 #But OpenCV uses H: 0-179, S: 0-255, V: 0-255
 
+def distModulo(val1, val2, maxVal):
+    dist = abs(val1 - val2)
+    return min(dist , maxVal- dist)
+
+
+def getDistofTuple(tupleTeinte, pixelHSV,):
+    teinte = 255
+    dist = 255
+    for i in tupleTeinte:
+        if distModulo(i, pixelHSV[0], 179) < dist:
+            dist = distModulo(i, pixelHSV[0], 179)
+            teinte = i
+    return teinte, dist
+
+def min_SUP_modulo(tupleTeinte, pixelHSV):
+    teinte = 255
+    dist = 255
+    for i in tupleTeinte:
+        if (pixelHSV[0] - i) %179:
+            dist = (pixelHSV[0] - i) %179
+            teinte = i
+    return teinte, dist
+
+def min_INF_modulo(tupleTeinte, pixelHSV):
+    teinte = 255
+    dist = 255
+    for i in tupleTeinte:
+        if (i -pixelHSV[0]) %179:
+            dist = (i -  pixelHSV[0]) %179
+            teinte = i
+    return teinte, dist
+
+
+
+
+
+
+
+
+
+
+def chooseColor(tupleTeinte,pixelHSV):
+    teinte_inf, dist_inf = min_INF_modulo(tupleTeinte, pixelHSV)
+    teinte_sup, dist_sup = min_SUP_modulo(tupleTeinte, pixelHSV)
+    
+    
+    distModulo = (dist_sup - dist_inf) % 179
+    
+    if dist_inf < dist_sup:
+        formule = dist_inf/2
+        return (pixel[0] -formule) %179
+    else:
+        formule = dist_sup/2
+        return (pixel[0] + formule) %179
+    
+
+    """
+    formule = dist1/2
+    if(len(tupleTeinte)>1):
+        teinte2, dist2 = getDistofTuple(list(tupleTeinte).remove(teinte1), pixelHSV)
+
+        distpivot = asb(dist1 - dist2)/2
+        if dist>distpivot//2:
+            formule = (pivot/2)-dist/2
+    """
+    
 
