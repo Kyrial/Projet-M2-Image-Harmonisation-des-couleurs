@@ -15,23 +15,34 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
         color = key #teinte de la couleur
       #  print(color)
         #calcul de la couleur complémentaire
+        colorCompl = (color+90)%180
         #on prend en compte aussi les voisines
         #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
-        somme = sommeVoisinHSV(histoHSV, color)
+        somme = sommeVoisinHSV(histoHSV, color)+ sommeVoisinHSV(histoHSV, colorCompl)
 
         if somme > mode[1]:
             mode = (color, somme)
         if verbose:
             verbosePourcent(ite, len(histoHSV))
 
+    modeCompl =  (mode[0]+90)%180
 
     print("couleur :        ", mode[0])
+    print("complémentaire : ", modeCompl)
     print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
+            #calcul de la distance entre le mode et le complémentaire
+            #on modifie les pixel courant        
+            distColor = distModulo(mode[0],imgHSV[i,j][0], 179)    # abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
+            distCompl = distModulo(modeCompl,imgHSV[i,j][0], 179)    # abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            if abs(distColor) < abs(distCompl):
 
-                imgHSV.itemset((i,j,0),mode[0])
+                imgHSV.itemset((i,j,0),mode[0]*(1-distColor/45) + (imgHSV[i,j][0]*(distColor/45)))
+            else:
+
+                imgHSV.itemset((i,j,0),modeCompl*(1-distCompl/45)+ (imgHSV[i,j][0]*(distCompl/45)))
             
 
 
@@ -41,8 +52,8 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
 # pensez a rectifier si nécessaire pour les calculs
 ####
 
+#filename = "yo"
 filename = "fleurs"
-#filename = "tulipes"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -65,7 +76,7 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_monoHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_mono.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_ComplHSV2.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl4.jpg", img)
 
 

@@ -9,11 +9,11 @@ from tensorflow import keras
 from tensorflow.keras.applications import vgg19
 print("module chargé")
 
-filename = "tulipes"
-styleName = "mur"
+filename = "blanc"
+styleName = "cat3"
 #styleName = "nuage"
 #styleName = "nuit-etoilee"
-outputPath = "../Images/Outputs/transfert_de_style/mur/"
+outputPath = "../Images/Outputs/transfert_de_style/blanc/"
 
 
 #image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
