@@ -82,7 +82,7 @@ def sommeVoisinHSV(histoHSV, teinte):
 #But OpenCV uses H: 0-179, S: 0-255, V: 0-255
 
 def distModulo(val1, val2, maxVal):
-    dist = abs(val1 - val2)
+    dist = int(abs(int(val1) - int(val2)))
     return min(dist , maxVal- dist)
 
 def distModulo_WithoutAbs(val1, val2, maxVal):
@@ -99,21 +99,25 @@ def getDistofTuple(tupleTeinte, pixelHSV,):
             teinte = i
     return teinte, dist
 
-def min_SUP_modulo(tupleTeinte, pixelHSV):
-    teinte = 255
-    dist = 255
-    for i in tupleTeinte:
-        if (pixelHSV[0] - i) %179:
-            dist = (pixelHSV[0] - i) %179
-            teinte = i
-    return teinte, dist
-
 def min_INF_modulo(tupleTeinte, pixelHSV):
     teinte = 255
     dist = 255
     for i in tupleTeinte:
-        if (i -pixelHSV[0]) %179:
-            dist = (i -  pixelHSV[0]) %179
+    #    print("distINF : ",i," pixel :",pixelHSV," ",     (pixelHSV- i) %180)
+        if (pixelHSV - i) %180 < dist:
+            dist = (pixelHSV - i) %180
+            teinte = i
+    return teinte, dist
+
+def min_SUP_modulo(tupleTeinte, pixelHSV):
+    teinte = 255
+    dist = 255
+    for i in tupleTeinte: 
+      #  print("(i -pixelHSV)  ", (i -pixelHSV),"     (i -pixelHSV[0])%180   ", (i -pixelHSV)%180)
+
+     #   print("distSUP : ",i," pixel :",pixelHSV," ", (i -pixelHSV) %180)
+        if (i -pixelHSV) %180 < dist:
+            dist = (i -  pixelHSV) %180
             teinte = i
     return teinte, dist
 
@@ -131,14 +135,14 @@ def chooseColor(tupleTeinte,pixelHSV):
     teinte_sup, dist_sup = min_SUP_modulo(tupleTeinte, pixelHSV)
     
     
-    distModulo = (dist_sup - dist_inf) % 179
+    distModulo = (dist_sup - dist_inf) % 180
     
     if dist_inf < dist_sup:
         formule = dist_inf/2
-        return (pixelHSV[0] -formule) %179
+        return (pixelHSV[0] -formule) %180
     else:
         formule = dist_sup/2
-        return (pixelHSV[0] + formule) %179
+        return (pixelHSV[0] + formule) %180
     
 
     """
@@ -152,15 +156,65 @@ def chooseColor(tupleTeinte,pixelHSV):
     """
 
 
+def getColor_Degrader(tupleTeinte,pixelHSV):
+    teinte_inf, dist_inf = min_INF_modulo(tupleTeinte, int(pixelHSV[0]))
+    teinte_sup, dist_sup = min_SUP_modulo(tupleTeinte, int(pixelHSV[0]))
+  #  print("tuple ::    ", tupleTeinte)
+    #print("couleur = ", pixelHSV[0])
+   # print("inf  ",teinte_inf, dist_inf)
+    #print("sup  ",teinte_sup, dist_sup)
+    couleur = pixelHSV[0]
+    if(dist_inf ==0 or dist_inf == dist_sup):
+        return couleur
+
+    #Pivot = (dist_sup - dist_inf) % 180
+    Pivot = abs(teinte_sup - teinte_inf)
+    if teinte_inf >teinte_sup or Pivot == 0 :
+   #     print("ici")
+        Pivot = 180 -teinte_inf+ teinte_sup
+    #print("pivot  ", Pivot)
+    Pivot = Pivot/2
+    if dist_inf < dist_sup:
+     #   print('dist_inf   ', dist_inf, "   couleur, ", couleur, "  teinte_inf", teinte_inf, "   pivot ", Pivot)
+        if couleur < teinte_inf:
+            couleur = couleur + 180
+      #      print('COOUULLEUUR   ', couleur)
+       #     print("coucou ", couleur,"\n")
+       #     print("pivott", Pivot," \n")
+        return (teinte_inf * (1 - (dist_inf/Pivot)) + (couleur * (dist_inf/Pivot)))%180
+    else:
+        if couleur > teinte_sup:
+       #     print("Thym -> ", couleur,"  thym superieur = ", teinte_sup )
+            teinte_sup = teinte_sup + 180
+      #  print(" thym superieur = ", teinte_sup, "  pivot = ", Pivot, "  dist sup ",dist_sup )
+        return ((teinte_sup * (1 - dist_sup/Pivot)) + (couleur * (dist_sup/Pivot)))%180
+
+
 """
-distColor = mode[0]-imgHSV[i,j][0]
-distCompl = modeCompl-imgHSV[i,j][0]
-            if abs(distColor) < abs(distCompl):
-
-                imgHSV.itemset((i,j,0),mode[0]*(distColor/45) + (imgHSV[i,j][0]*(1-distColor/45)))
-            else:
-
-                imgHSV.itemset((i,j,0),modeCompl*(distCompl/45)+ (imgHSV[i,j][0]*(1-distCompl/45)))
+print('test1  ', getColor_Degrader( (103,13), [145]), "\n\n")
+print('\ntest2  ', getColor_Degrader( (103,13), [141, 7,252]), "\n\n")
 """
-    
+"""
+print('\ntest3  120 ', getColor_Degrader( (13,103), [120, 7, 252]), "\n\n")
+print('\ntest3  130 ', getColor_Degrader( (13,103), [130, 7, 252]), "\n\n")
+print('\ntest3  140 ', getColor_Degrader( (13,103), [140, 7, 252]), "\n\n")
 
+print('\ntest3  140 ', getColor_Degrader( (13,103), [140, 7, 252]) )
+print('\ntest3  141 ', getColor_Degrader( (13,103), [141, 7, 252]))
+print('\ntest3  142 ', getColor_Degrader( (13,103), [142, 7, 252]))
+print('\ntest3  143 ', getColor_Degrader( (13,103), [143, 7, 252]))
+print('\ntest3  144 ', getColor_Degrader( (13,103), [144, 7, 252]))
+print('\ntest3  145 ', getColor_Degrader( (13,103), [145, 7, 252]))
+print('\ntest3  146 ', getColor_Degrader( (13,103), [146, 7, 252]))
+print('\ntest3  147 ', getColor_Degrader( (13,103), [147, 7, 252]))
+"""
+#print('\ntest3  148 ', getColor_Degrader( (13,103), [148, 7, 252]))
+#print('\ntest3  149 ', getColor_Degrader( (13,103), [149, 7, 252]))
+#for i in range(0,180,5):
+ #  print('test3 ',i,"  ", getColor_Degrader( (13,103), [i, 7, 252]),"\n" )
+
+"""
+print('\ntest3  ', getColor_Degrader( (150,10), [50]), "\n\n")
+print('\ntest4  ', getColor_Degrader( (170,20), [2]), "\n\n") #pas bon
+print('\ntest4  ', getColor_Degrader( (150,5), [178]), "\n\n")
+"""

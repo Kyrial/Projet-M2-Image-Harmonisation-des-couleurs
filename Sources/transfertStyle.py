@@ -9,12 +9,12 @@ from tensorflow import keras
 from tensorflow.keras.applications import vgg19
 print("module chargé")
 
-filename = "blanc"
-styleName = "cat3"
+filename = "cat3"
+styleName = "vert"
 #styleName = "nuage"
 #styleName = "nuit-etoilee"
-outputPath = "../Images/Outputs/transfert_de_style/blanc/"
-
+#outputPath = "../Images/Outputs/transfert_de_style/blanc/"
+outputPath = "../Images/Outputs/transfert_de_style/chat_vert/"
 
 #image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
 image_path = "../Images/Inputs/"+filename+".jpg"

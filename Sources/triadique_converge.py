@@ -31,23 +31,12 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     print("mode = ",mode[0])
     print("t1 = ", modet1)
     print("t2 = ", modet2)
+    tupleTeinte = [int(modet1),int(mode[0]),int(modet2)]
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
-            #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant        
-            distColor =  distModulo(mode[0],imgHSV[i,j][0], 179)  # abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
-            dist1 =  distModulo(modet1,imgHSV[i,j][0], 179)      # abs(modet1-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            dist2 =  distModulo(modet2,imgHSV[i,j][0], 179)      #  abs(modet2-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            if distColor < dist1 <= dist2 or distColor < dist2 <= dist1:
-
-                imgHSV.itemset((i,j,0),mode[0])
-            elif dist1 < dist2 :
-
-                imgHSV.itemset((i,j,0),modet1)
-            else:
-
-                imgHSV.itemset((i,j,0),modet2)
+            colorcurr = (imgHSV[i,j])
+            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
             
 
 
@@ -75,7 +64,7 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_TriadiqueHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique_converge.jpg", img)
 
 
 

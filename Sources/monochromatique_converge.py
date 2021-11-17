@@ -27,12 +27,13 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
 
     print("couleur :        ", mode[0])
     print("nbOcc : ", mode[1])
+    tupleTeinte = [int(mode[0])]
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
-
-                imgHSV.itemset((i,j,0),mode[0])
-            
+                #imgHSV.itemset((i,j,0),mode[0])
+                colorcurr = (imgHSV[i,j])
+                imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
 
 
 
@@ -66,6 +67,6 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_monoHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_mono_converge.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique_converge.jpg", img)
 
 
