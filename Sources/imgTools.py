@@ -4,6 +4,25 @@ import math
 import numpy as np
 
 
+
+def convertToHSV(img):
+    return cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+def convertToRGB(img):
+    return cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
+def whriteToHSV_asGray(path, filename):
+    img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
+    image = convertToHSV(img)
+    (h, s, v) = cv2.split(image) 
+    image2 = cv2.merge([h,h,h])
+    cv2.imwrite(path+"HSV/"+filename+".jpg", image2)
+    return path+"HSV/"+filename+".jpg"
+#def whriteToRGB(img,path, filename):
+ #   image = convertToRGB(img)
+  #  cv2.imwrite(path+"HSV/"+filename, img)
+
+
+
+
 #permet d'afficher les pourcentage de progression
 def verbosePourcent(current, valMax):
     if verbosePourcent.pourcent < int(current*100/valMax):
@@ -203,6 +222,8 @@ def getColor_Degrader(tupleTeinte,pixelHSV):
             teinte_sup = teinte_sup + 180
       #  print(" thym superieur = ", teinte_sup, "  pivot = ", Pivot, "  dist sup ",dist_sup )
         return ((teinte_sup * (1 - dist_sup/Pivot)) + (couleur * (dist_sup/Pivot)))%180
+
+
 
 
 """

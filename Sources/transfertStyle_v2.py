@@ -14,15 +14,19 @@ styleName = "vert"
 #styleName = "nuage"
 #styleName = "nuit-etoilee"
 #outputPath = "../Images/Outputs/transfert_de_style/blanc/"
-outputPath = "../Images/Outputs/transfert_de_style/chat_vert/"
+outFile= "chat_vert_viaHSV/"
+outputPath = "../Images/Outputs/transfert_de_style/"+outFile
 
 #image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
-image_path = "../Images/Inputs/"+filename+".jpg"
+path = "../Images/Inputs/"
+image = "../Images/Inputs/"+filename+".jpg"
+image_path = whriteToHSV_asGray(path, filename)
+imgCV2 = cv2.imread (image_path)
+styleimage ="../Images/Inputs/"+styleName+".jpg"
 
-style_reference_image_path ="../Images/Inputs/"+styleName+".jpg"
+style_reference_image_path = whriteToHSV_asGray(path, styleName)
 
-
-result_prefix = filename_styleName+"_generated"
+result_prefix = filename+"_"+styleName+"_generated"
 
 
 
@@ -44,21 +48,24 @@ img_ncols = width
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 # read the image file in a numpy array
-a = plt.imread(image_path)
-b = plt.imread(style_reference_image_path)
+a = plt.imread(image)
+b = plt.imread(styleimage)
 f, axarr = plt.subplots(1,2, figsize=(15,15))
 axarr[0].imshow(a)
 axarr[1].imshow(b)
 plt.show()
 
-
+#(h, s, v) = cv2.split(newImg)
 
 
 def preprocess_image(image_path):
     # Util function to open, resize and format pictures into appropriate tensors
+   
     img = keras.preprocessing.image.load_img(
         image_path, target_size=(img_nrows, img_ncols)
     )
+
+    
     img = keras.preprocessing.image.img_to_array(img)
     img = np.expand_dims(img, axis=0)
     img = vgg19.preprocess_input(img)
@@ -152,6 +159,7 @@ def compute_loss(combination_image, base_image, style_reference_image):
     # 4. Extract the content layers + content loss
     layer_features = features[content_layer_name]
     base_image_features = layer_features[0, :, :, :]
+    #print(base_image_features)
     combination_features = layer_features[2, :, :, :]
 
     loss = loss + content_weight * content_loss(
