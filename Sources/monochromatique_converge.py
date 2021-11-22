@@ -45,7 +45,7 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
 # pensez a rectifier si nécessaire pour les calculs
 ####
 
-filename = "fleurs"
+filename = "tulipes"
 #filename = "tulipes"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -70,6 +70,6 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_monoHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique_converge.jpg", img)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Mono_converge.jpg", img)
 
 
