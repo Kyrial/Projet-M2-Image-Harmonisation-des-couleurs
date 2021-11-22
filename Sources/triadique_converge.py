@@ -37,6 +37,9 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
         for j in range(0,imgHSV.shape[1]):
             colorcurr = (imgHSV[i,j])
             imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+    couleurs = vignette([mode[0],modet1,modet2])
+    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique_converge_Vignette.jpg", couleurs)
+
             
 
 
@@ -46,7 +49,7 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
 # pensez a rectifier si nécessaire pour les calculs
 ####
 
-filename = "tulipes"
+filename = "fleurs"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

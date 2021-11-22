@@ -1,6 +1,7 @@
 import cv2
 import random
 import math
+import numpy as np
 
 
 #permet d'afficher les pourcentage de progression
@@ -121,6 +122,20 @@ def min_SUP_modulo(tupleTeinte, pixelHSV):
             teinte = i
     return teinte, dist
 
+
+def vignette(colors):
+    img2 = np.zeros((50,100,3),dtype=np.uint8)
+    imghsv2 = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
+    for i in range(50):
+        for j in range(100):
+            imghsv2.itemset((i,j,1),179)
+            imghsv2.itemset((i,j,2),179)
+            #if j<(100//len(colors)):
+            imghsv2.itemset((i,j,0),colors[math.floor(j/math.ceil(100/len(colors)))])
+            #else:
+             #   imghsv2.itemset((i,j,0),colors[1])
+    img2 = cv2.cvtColor(imghsv2, cv2.COLOR_HSV2BGR)
+    return img2
 
 
 

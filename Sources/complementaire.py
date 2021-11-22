@@ -38,10 +38,11 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
             distColor = distModulo(mode[0],imgHSV[i,j][0], 179)    # abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
             distCompl = distModulo(modeCompl,imgHSV[i,j][0], 179)    # abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
             if distColor < distCompl:
-                imgHSV.itemset((i,j,0),mode[0]*(1-distColor/45) + (imgHSV[i,j][0]*(distColor/45)))
+                imgHSV.itemset((i,j,0),mode[0])
             else:
 
-                 imgHSV.itemset((i,j,0),modeCompl*(1-distCompl/45)+ (imgHSV[i,j][0]*(distCompl/45)))
+                imgHSV.itemset((i,j,0),modeCompl)
+            
 
 
 

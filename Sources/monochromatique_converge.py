@@ -34,6 +34,9 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
                 #imgHSV.itemset((i,j,0),mode[0])
                 colorcurr = (imgHSV[i,j])
                 imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+    couleurs = vignette([mode[0]])
+    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Mono_converge_Vignette.jpg", couleurs)
+
 
 
 

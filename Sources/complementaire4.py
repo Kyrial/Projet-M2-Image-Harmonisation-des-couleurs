@@ -31,32 +31,54 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     print("complémentaire : ", modeCompl)
     print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
+    dif=45
+    a=0
+    b=0
+    c=0  
+    d=0    
+    e=0
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
             #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant        
+            #on modifie les pixel courant  
+            
+            
             distColor = distModulo_WithoutAbs(mode[0],imgHSV[i,j][0], 179)    # abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
-            distCompl = distModulo_WithoutAbs(modeCompl,imgHSV[i,j][0], 179)    # abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            distCompl = distModulo_WithoutAbs(modeCompl,imgHSV[i,j][0], 179)   # abs(modeCompl-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
+            distColora = abs(distColor)
+            distCompla = abs(distCompl)
             if abs(distColor) < abs(distCompl):
-                if(distColor<imgHSV[i,j][0]<distCompl or  distColor>imgHSV[i,j][0]): 
-                    imgHSV.itemset((i,j,0),mode[0]*(distColor/45) + (imgHSV[i,j][0]*(1-distColor/45)))
-                elif (distColor<distCompl<imgHSV[i,j][0]) :
+                
+                if(distColora<imgHSV[i,j][0]<distCompla or  distColora>imgHSV[i,j][0]): 
+                    imgHSV.itemset((i,j,0),mode[0]*(distColor/dif) + (imgHSV[i,j][0]*(1-distColor/dif)))
+                    a+=1
+                elif (distColora<distCompla<imgHSV[i,j][0]) :
+                    b+=1
                     colors=imgHSV[i,j][0]-255
-                    imgHSV.itemset((i,j,0),mode[0]*(distColor/45) + (colors*(1-distColor/45)))
-                elif (distColor>distCompl>imgHSV[i,j][0]) :
+                    imgHSV.itemset((i,j,0),mode[0]*(distColor/dif) + (colors*(1-distColor/dif)))
+                elif (distColora>distCompla>imgHSV[i,j][0]) :
+                    b+=1
                     colors=imgHSV[i,j][0]+255
-                    imgHSV.itemset((i,j,0),mode[0]*(distColor/45) + (colors*(1-distColor/45)))
+                    imgHSV.itemset((i,j,0),mode[0]*(distColor/dif) + (colors*(1-distColor/dif)))
+                else:
+                    e+=1
             else:
-                if(distColor<imgHSV[i,j][0]<distCompl or  distCompl>imgHSV[i,j][0]):
-                    imgHSV.itemset((i,j,0),modeCompl*(distCompl/45)+ (imgHSV[i,j][0]*(1-distCompl/45)))
-                elif (distCompl<distColor<imgHSV[i,j][0]) :
+                
+                if(distCompla<imgHSV[i,j][0]<distColora or  distCompla>imgHSV[i,j][0]):
+                    c+=1
+                    imgHSV.itemset((i,j,0),modeCompl*(distCompl/dif)+ (imgHSV[i,j][0]*(1-distCompl/dif)))
+                elif (distCompla<distColora<imgHSV[i,j][0]) :
+                    d+=1
                     colors=imgHSV[i,j][0]-255
-                    imgHSV.itemset((i,j,0),mode[0]*(distCompl/45) + (colors*(1-distCompl/45)))
-                elif (distCompl>distColor>imgHSV[i,j][0]) :
-                   colors=imgHSV[i,j][0]+255
-                   imgHSV.itemset((i,j,0),mode[0]*(distCompl/45) + (colors*(1-distCompl/45)))
+                    imgHSV.itemset((i,j,0),mode[0]*(distCompl/dif) + (colors*(1-distCompl/dif)))
+                elif (distCompla>distColora>imgHSV[i,j][0]) :
+                    d+=1
+                    colors=imgHSV[i,j][0]+255
+                    imgHSV.itemset((i,j,0),mode[0]*(distCompl/dif) + (colors*(1-distCompl/dif)))
+                else:
+                    e+=1
 
-
+    print(a,b,c,d,e)
 
             
 

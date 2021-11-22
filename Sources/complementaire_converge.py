@@ -39,6 +39,8 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
            # print("\nappel fonction: ",tupleTeinte,imgHSV[i,j] )
             colorcurr = (imgHSV[i,j])
             imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+    couleurs = vignette([mode[0],modeCompl])
+    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl_converge_Vignette.jpg", couleurs)
             
 
 
@@ -72,6 +74,6 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl100HSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl100.jpg", img)
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl100HSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl_converge.jpg", img)
 
