@@ -30,26 +30,15 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     modec1 =  (mode[0]+20)%180
     modec2 =  (mode[0]+90)%180
     modec3 =  (mode[0]+110)%180
+    tupleTeinte = [int(modec1),int(mode[0]),int(modec2),int(modec3)]
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
-            #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant        
-            distColor = abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
-            dist1 = abs(modec1-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            dist2 = abs(modec2-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            dist3 = abs(modec3-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            if distColor <= min(dist1,dist2,dist3) :
+            colorcurr = (imgHSV[i,j])
+            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+    couleurs = vignette([mode[0],modec1,modec2,modec3])
+    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_doubleCompl_converge_Vignette.jpg", couleurs)
 
-                imgHSV.itemset((i,j,0),mode[0])
-            elif dist1 <= min(dist2,dist3):
-
-                imgHSV.itemset((i,j,0),modec1)
-            elif dist2 <= dist3 :
-
-                imgHSV.itemset((i,j,0),modec2)
-            else:
-                imgHSV.itemset((i,j,0),modec3)
             
 
 
@@ -59,7 +48,7 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
 # pensez a rectifier si nécessaire pour les calculs
 ####
 
-filename = "cat3"
+filename = "tulipes"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -76,6 +65,6 @@ findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleComplHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleCompl.jpg", img)
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleComplHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleCompl_converge.jpg", img)
 

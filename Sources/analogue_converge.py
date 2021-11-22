@@ -60,7 +60,7 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
 ####
 
 #filename = "cat3"
-filename = "fleurs"
+filename = "tulipes"
 img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -83,8 +83,8 @@ findBestHarmonieAnalogue(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_AnalogueHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue.jpg", img)
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_AnalogueHSV.jpg", hsvImage)
+cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge.jpg", img)
 
 
 
