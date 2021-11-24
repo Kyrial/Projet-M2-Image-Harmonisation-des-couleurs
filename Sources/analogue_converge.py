@@ -19,8 +19,10 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
         colorA = (color-ecart)%180
         colorB = (color+ecart)%180
         #on prend en compte aussi les voisines
-        #somme =sommeVoisine(histoHSV,color) + sommeVoisine(histoHSV, colorCompl)
-        somme = sommeVoisinHSV(histoHSV, color)+ sommeVoisinHSV(histoHSV, colorB)+ sommeVoisinHSV(histoHSV, colorA)
+        somme= sommeVoisinHSV(histoHSV, color)
+        for i in range(1,ecart):
+            somme += sommeVoisinHSV(histoHSV, color+i%180)
+            somme += sommeVoisinHSV(histoHSV, color-i%180)
 
         if somme > mode[1]:
             mode = (color, somme)
@@ -35,20 +37,16 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
     print("analogue2 : ", modecolorB)
     print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
+    tupleTeinte = []
+    for i in range(-ecart,ecart):
+        print(tupleTeinte)
+        tupleTeinte.append(int((mode[0])+i)%180)
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
-            #calcul de la distance entre le mode et le complémentaire
-            #on modifie les pixel courant        
-            distColor = abs(mode[0]-imgHSV[i,j][0])# distanceComp(mode[0], img[i,j],0)
-            distcolorA = abs(modecolorA-imgHSV[i,j][0]) #distanceComp(modeCompl, img[i,j],0)
-            distcolorB = abs(modecolorB-imgHSV[i,j][0])
-
-            if not(distcolorA <ecart and distcolorB<ecart):
-                if distcolorA < distcolorB:
-                    imgHSV.itemset((i,j,0),modecolorA)
-                else:
-                    imgHSV.itemset((i,j,0),modecolorB)
-    couleurs = vignette([mode[0],modecolorA,modecolorB])
+           # print("\nappel fonction: ",tupleTeinte,imgHSV[i,j] )
+            colorcurr = (imgHSV[i,j])
+            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+    couleurs = vignette(tupleTeinte)
     cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge_Vignette.jpg", couleurs)
             
 
