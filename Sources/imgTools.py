@@ -9,16 +9,22 @@ def convertToHSV(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 def convertToRGB(img):
     return cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
-def whriteToHSV_asGray(path, filename):
-    img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
+def imgToHSV_asGray(path, filename):
+    img = cv2.imread (path+filename+".jpg")
     image = convertToHSV(img)
     (h, s, v) = cv2.split(image) 
     image2 = cv2.merge([h,h,h])
-    cv2.imwrite(path+"HSV/"+filename+".jpg", image2)
-    return path+"HSV/"+filename+".jpg"
-#def whriteToRGB(img,path, filename):
- #   image = convertToRGB(img)
-  #  cv2.imwrite(path+"HSV/"+filename, img)
+    #cv2.imwrite(path+"HSV/"+filename+".jpg", image2)
+    #return path+"HSV/"+filename+".jpg"
+    return image2
+def HSV_asGreyToRGB(HSVgray,hsv ):
+#    h = cv2.cvtColor(HSVgray, cv2.COLOR_BGR2GRAY)
+    (h1, h2, h3) = cv2.split(HSVgray) 
+    h = cv2.addWeighted(cv2.addWeighted(h1, 0.33, h2, 0.33, 0),0.66,h3, 0.33 ,0.01  )
+    (_ , s, v) = cv2.split(hsv) 
+    img = cv2.merge([h,s,v])
+    return convertToRGB(img)
+  
 
 
 
@@ -33,6 +39,24 @@ def verbosePourcent(current, valMax):
         verbosePourcent.pourcent = 0 # reset le compteur une fois 100% atteint
 verbosePourcent.pourcent=0
 
+def verbosePourcentCombined(current, valMax,underCurrent, underValMax):
+    result = ""
+    if verbosePourcentCombined.pourcent < int(current*100/valMax) or verbosePourcentCombined.intern < int(underCurrent*100/underValMax):
+        result += "\033[A                                \033[A\n"
+        result +=  str(int(current*100/valMax))+ "%"
+        verbosePourcentCombined.pourcent = int(current*100/valMax)
+        if verbosePourcentCombined.intern < int(underCurrent*100/underValMax):
+            result += " _ "+str(int(underCurrent*100/underValMax)) + "%"
+            verbosePourcentCombined.intern = int(underCurrent*100/underValMax)
+
+
+    if verbosePourcentCombined.pourcent ==100:
+        verbosePourcentCombined.pourcent = 0 # reset le compteur une fois 100% atteint
+    if verbosePourcentCombined.intern ==100:
+        verbosePourcentCombined.intern = 0
+    print(result)
+verbosePourcentCombined.pourcent=0
+verbosePourcentCombined.intern=0
 
 ##
 
@@ -224,8 +248,11 @@ def getColor_Degrader(tupleTeinte,pixelHSV):
         return ((teinte_sup * (1 - dist_sup/Pivot)) + (couleur * (dist_sup/Pivot)))%180
 
 
-
-
+def getDicoDegrade(tupleTeinte):
+    dicoDegrade = {}
+    for i in range(180):
+        dicoDegrade[i] = getColor_Degrader(tupleTeinte,(i,0,0))
+    return dicoDegrade
 """
 print('test1  ', getColor_Degrader( (103,13), [145]), "\n\n")
 print('\ntest2  ', getColor_Degrader( (103,13), [141, 7,252]), "\n\n")

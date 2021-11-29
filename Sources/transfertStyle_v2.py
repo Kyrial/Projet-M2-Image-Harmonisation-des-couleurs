@@ -19,12 +19,14 @@ outputPath = "../Images/Outputs/transfert_de_style/"+outFile
 
 #image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
 path = "../Images/Inputs/"
-image = "../Images/Inputs/"+filename+".jpg"
-image_path = whriteToHSV_asGray(path, filename)
-imgCV2 = cv2.imread (image_path)
-styleimage ="../Images/Inputs/"+styleName+".jpg"
+imagePath = "../Images/Inputs/"+filename+".jpg"
+imgOriginal = cv2.imread (imagePath)
+imageHSV = imgToHSV_asGray(path, filename)
+#imgCV2 = cv2.imread (image_path)
+stylePath ="../Images/Inputs/"+styleName+".jpg"
 
-style_reference_image_path = whriteToHSV_asGray(path, styleName)
+#style_reference_image_path 
+styleHSV = imgToHSV_asGray(path, styleName)
 
 result_prefix = filename+"_"+styleName+"_generated"
 
@@ -36,7 +38,7 @@ style_weight = 1e-6
 content_weight = 2.5e-8
 
 # Dimension de l'image généré
-width, height = keras.preprocessing.image.load_img(image_path).size
+width, height = keras.preprocessing.image.load_img(imagePath).size
 #img_nrows = 400
 #img_ncols = int(width * img_nrows / height)
 img_nrows = height
@@ -48,8 +50,8 @@ img_ncols = width
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 # read the image file in a numpy array
-a = plt.imread(image)
-b = plt.imread(styleimage)
+a = plt.imread(imagePath)
+b = plt.imread(stylePath)
 f, axarr = plt.subplots(1,2, figsize=(15,15))
 axarr[0].imshow(a)
 axarr[1].imshow(b)
@@ -58,18 +60,20 @@ plt.show()
 #(h, s, v) = cv2.split(newImg)
 
 
-def preprocess_image(image_path):
+def preprocess_image(img):
     # Util function to open, resize and format pictures into appropriate tensors
    
-    img = keras.preprocessing.image.load_img(
-        image_path, target_size=(img_nrows, img_ncols)
-    )
-
+    #img = keras.preprocessing.image.load_img(
+    #    image_path, target_size=(img_nrows, img_ncols))
+    img = cv2.resize(img, (width,height), interpolation = cv2.INTER_AREA)
     
     img = keras.preprocessing.image.img_to_array(img)
+    
     img = np.expand_dims(img, axis=0)
     img = vgg19.preprocess_input(img)
     return tf.convert_to_tensor(img)
+
+
 
 
 def deprocess_image(x):
@@ -214,9 +218,9 @@ optimizer = keras.optimizers.SGD(
     )
 )
 
-base_image = preprocess_image(image_path)
-style_reference_image = preprocess_image(style_reference_image_path)
-combination_image = tf.Variable(preprocess_image(image_path))
+base_image = preprocess_image(imageHSV)
+style_reference_image = preprocess_image(styleHSV)
+combination_image = tf.Variable(preprocess_image(imageHSV))
 
 iterations = 4000
 for i in range(1, iterations + 1):
@@ -227,46 +231,6 @@ for i in range(1, iterations + 1):
     optimizer.apply_gradients([(grads, combination_image)])
     if i % 10 == 0:
         print("Iteration %d: loss=%.2f" % (i, loss))
-        img = deprocess_image(combination_image.numpy())
+        HSVgray = deprocess_image(combination_image.numpy())
         fname = outputPath+result_prefix + "_at_iteration_%d.png" % i
-        keras.preprocessing.image.save_img(fname, img)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#### ATTENTION: ####
-# OPENCV utilise le format BGR (bleu, vert, rouge)
-# pensez a rectifier si nécessaire pour les calculs
-####
-
-
-
-
-#histo = getHisto(img)
-     
-
-#findBestHarmonieCompl(histo, img)
-#findBestHarmonieTriad(histo, img)
-
-#cv2.imwrite("../Images/Outputs/"+filename+"_Triadique.jpg", img)
+        keras.preprocessing.image.save_img(fname, HSV_asGreyToRGB(HSVgray,imageHSV ))

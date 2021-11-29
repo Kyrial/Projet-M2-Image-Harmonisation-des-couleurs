@@ -5,6 +5,9 @@ from imgTools import *
 
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
+
+
+
 def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
     ecart = 10
     #le mode correspond a un p
@@ -31,23 +34,27 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
 
         modecolorA = (mode[0]-ecart)%180
         modecolorB = (mode[0]+ecart)%180
-
-    print("couleur :        ", mode[0])
-    print("analogue1 : ", modecolorA)
-    print("analogue2 : ", modecolorB)
-    print("nbOcc : ", mode[1])
+    if(verbose):
+        print("couleur :        ", mode[0])
+        print("analogue1 : ", modecolorA)
+        print("analogue2 : ", modecolorB)
+        print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
     tupleTeinte = []
     for i in range(-ecart,ecart):
-        print(tupleTeinte)
+     #   print(tupleTeinte)
         tupleTeinte.append(int((mode[0])+i)%180)
+
+    dicodegrade = getDicoDegrade(tupleTeinte)
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
            # print("\nappel fonction: ",tupleTeinte,imgHSV[i,j] )
             colorcurr = (imgHSV[i,j])
-            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+            #imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])
     couleurs = vignette(tupleTeinte)
-    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge_Vignette.jpg", couleurs)
+    return imgHSV
+    #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge_Vignette.jpg", couleurs)
             
 
 
@@ -67,22 +74,13 @@ histoHSV = getHistoHSV(img)
 
 
 hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-max =0
-for i in range(0,hsvImage.shape[0]):
-    for j in range(0,hsvImage.shape[1]):
-        if max< hsvImage[i,j][0]:
-            max = hsvImage[i,j][0]
 
-
-print("max teinte   : ",max ,"\n\n\n")
-#print("couleur   : ",hsvImage[0,0])
-
-findBestHarmonieAnalogue(histoHSV, hsvImage)
+findBestHarmonieAnalogue(histoHSV, hsvImage,False)
 #findBestHarmonieTriad(histo, img)
 
 img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_AnalogueHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge.jpg", img)
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge.jpg", img)
 
 
 
