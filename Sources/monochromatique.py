@@ -24,9 +24,9 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
         if verbose:
             verbosePourcent(ite, len(histoHSV))
 
-
-    print("couleur :        ", mode[0])
-    print("nbOcc : ", mode[1])
+    if verbose:
+        print("couleur :        ", mode[0])
+        print("nbOcc : ", mode[1])
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):

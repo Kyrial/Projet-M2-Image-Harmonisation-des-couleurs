@@ -5,7 +5,7 @@ from imgTools import *
 
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
+def findBestHarmonieDoubleCompl(histoHSV, imgHSV, verbose = True):
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
@@ -31,13 +31,15 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     modec2 =  (mode[0]+90)%180
     modec3 =  (mode[0]+110)%180
     tupleTeinte = [int(modec1),int(mode[0]),int(modec2),int(modec3)]
+    dicodegrade = getDicoDegrade(tupleTeinte)
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
             colorcurr = (imgHSV[i,j])
-            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+            #imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])
     couleurs = vignette([mode[0],modec1,modec2,modec3])
-    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_doubleCompl_converge_Vignette.jpg", couleurs)
+   # cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_doubleCompl_converge_Vignette.jpg", couleurs)
 
             
 
@@ -48,23 +50,23 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
 # pensez a rectifier si nécessaire pour les calculs
 ####
 
-filename = "tulipes"
-img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
+#filename = "tulipes"
+#img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
-histoHSV = getHistoHSV(img)
+#histoHSV = getHistoHSV(img)
 
 
-hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 #print("couleur   : ",hsvImage[0,0])
 #print("couleur   : ",hsvImage[0,0])
 
-findBestHarmonieCompl(histoHSV, hsvImage)
+#findBestHarmonieCompl(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
-img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
+#img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleComplHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleCompl_converge.jpg", img)
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_DoubleCompl_converge.jpg", img)
 

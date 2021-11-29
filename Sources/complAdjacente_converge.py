@@ -29,21 +29,23 @@ def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
 
         modecolorA = (mode[0]+90-ecart)%180
         modecolorB = (mode[0]+90+ecart)%180
-
-    print("couleur :        ", mode[0])
-    print("analogue1 : ", modecolorA)
-    print("analogue2 : ", modecolorB)
-    print("nbOcc : ", mode[1])
+    if(verbose):
+        print("couleur :        ", mode[0])
+        print("analogue1 : ", modecolorA)
+        print("analogue2 : ", modecolorB)
+        print("nbOcc : ", mode[1])
     tupleTeinte = [int(modecolorA),int(mode[0]),int(modecolorB)]
+    dicodegrade = getDicoDegrade(tupleTeinte)
     #on harmonise les couleur de l'image
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
             #on modifie les pixel courant            
             colorcurr = (imgHSV[i,j])
-            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+            #imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
+            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])
 
     couleurs = vignette([mode[0],modecolorA,modecolorB])
-    cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_CompAdjacente_converge_Vignette.jpg", couleurs)
+    #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_CompAdjacente_converge_Vignette.jpg", couleurs)
             
 
 
@@ -54,28 +56,18 @@ def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
 ####
 
 #filename = "cat3"
-filename = "tulipes"
-img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
+#filename = "tulipes"
+#img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
-histoHSV = getHistoHSV(img)
+#histoHSV = getHistoHSV(img)
 
 
-hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-max =0
-for i in range(0,hsvImage.shape[0]):
-    for j in range(0,hsvImage.shape[1]):
-        if max< hsvImage[i,j][0]:
-            max = hsvImage[i,j][0]
-
-
-print("max teinte   : ",max ,"\n\n\n")
-#print("couleur   : ",hsvImage[0,0])
-
-findBestHarmonieComplAdj(histoHSV, hsvImage)
+#hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#findBestHarmonieComplAdj(histoHSV, hsvImage)
 #findBestHarmonieTriad(histo, img)
 
-img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
+#img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_complAdjHSV.jpg", hsvImage)
-cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_complAdj_converge.jpg", img)
+#cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_complAdj_converge.jpg", img)

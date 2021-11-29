@@ -6,7 +6,10 @@ from imgTools import *
 import string, os 
 from analogue_converge import *
 from complementaire_converge import *
-
+from complAdjacente_converge import *
+from monochromatique_converge import *
+from triadique_converge import *
+from doubleComplementaire_converge import *
 
 verbose = True
 
@@ -30,8 +33,9 @@ verbose = True
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog,QMenuBar, QMenu, QAction
+from PyQt5.QtWidgets import QFileDialog,QMenuBar, QMenu, QAction, QRadioButton,QColorDialog
 from PyQt5.QtGui import QImage
+import colorsys
 
 import imutils
 
@@ -82,10 +86,10 @@ class Ui_MainWindow(object):
         self.harmonieLayout.setObjectName("harmonieLayout")
         self.gridLayout.addLayout(self.harmonieLayout, 2, 0, 1, 1)
         
-        #self.statusBar()
+        
         self._createMenuBar(MainWindow)
-
-
+        #bouton radio couleur
+        self.createRadioButton()
 
 
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -108,8 +112,26 @@ class Ui_MainWindow(object):
         self.harmonieLayout.addWidget(self.AnalogueButton)
         #Bouton Complementaire
         self.ComplementaireButton = QtWidgets.QPushButton(self.centralwidget)
-        self.ComplementaireButton.setObjectName("Analogue")
+        self.ComplementaireButton.setObjectName("Complementaire")
         self.harmonieLayout.addWidget(self.ComplementaireButton)
+        #Bouton ComplementaireAdjacente
+        self.ComplAdjButton = QtWidgets.QPushButton(self.centralwidget)
+        self.ComplAdjButton.setObjectName("ComplAdj")
+        self.harmonieLayout.addWidget(self.ComplAdjButton)
+        #Bouton MonoButton
+        self.MonoButton = QtWidgets.QPushButton(self.centralwidget)
+        self.MonoButton.setObjectName("ComplAdj")
+        self.harmonieLayout.addWidget(self.MonoButton)
+                #Bouton triadique
+        self.triadiqueButton = QtWidgets.QPushButton(self.centralwidget)
+        self.triadiqueButton.setObjectName("ComplAdj")
+        self.harmonieLayout.addWidget(self.triadiqueButton)
+                #Bouton MonoButton
+        self.DoubleComplButton = QtWidgets.QPushButton(self.centralwidget)
+        self.DoubleComplButton.setObjectName("ComplAdj")
+        self.harmonieLayout.addWidget(self.DoubleComplButton)
+
+
 
         self.retranslateUi(MainWindow)
         self.verticalSlider.valueChanged['int'].connect(self.brightness_value)
@@ -122,11 +144,31 @@ class Ui_MainWindow(object):
         self.retourButton.clicked.connect(self.resetImg)
         self.AnalogueButton.clicked.connect(self.LaunchAnalogue)
         self.ComplementaireButton.clicked.connect(self.LaunchComplementaire)
+        self.ComplAdjButton.clicked.connect(self.LaunchComplAdjacente)
+        self.MonoButton.clicked.connect(self.launchMonochromatique)
+        self.triadiqueButton.clicked.connect(self.launchTriadique)
+        self.DoubleComplButton.clicked.connect(self.launchDoubleCompl)
+        
         # Added code here
         self.filename = None # Will hold the image address location
         self.tmp = None # Will hold the temporary image for display
         self.brightness_value_now = 0 # Updated brightness value
         self.blur_value_now = 0 # Updated blur value
+
+
+    def createRadioButton(self):
+        self.colorAutoBtn = QRadioButton('Couleur Auto')
+        self.pipetteBtn = QRadioButton('Pipette')
+
+        self.colorAutoBtn.toggled.connect(self.onClickAutoColor)
+        self.pipetteBtn.clicked.connect(self.onClickPipette)
+
+        #layout.addWidget(self.rbtn1)
+        #layout.addWidget(self.rbtn2)
+        self.horizontalLayout_2.addWidget(self.colorAutoBtn)
+        self.horizontalLayout_2.addWidget(self.pipetteBtn)
+        self.colorAutoBtn.setChecked(True) 
+
 
     def _createMenuBar(self, MainWindow):
         menuBar = MainWindow.menuBar()
@@ -144,6 +186,32 @@ class Ui_MainWindow(object):
         # Creating menus using a title
         #editMenu = menuBar.addMenu("&Edit")
         #helpMenu = menuBar.addMenu("&Help")
+
+
+    def hex_to_hsv(self,value):
+        value = value.lstrip('#')
+        lv = len(value)
+        a = tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
+        a = colorsys.rgb_to_hsv(a[0],a[1],a[2])
+        b = a[0]*360/2, a[1]*255, a[2]
+ 
+        return b
+
+    def onClickAutoColor(self):
+        if self.colorAutoBtn.isChecked():
+            self.pretraitement()
+    def onClickPipette(self):
+        if self.pipetteBtn.isChecked():
+        
+            # opening color dialog
+            color = QColorDialog.getColor()
+            a=self.hex_to_hsv(color.name())
+            print(a)
+            self.histoHSV ={}
+            self.histoHSV[a[0]] =50000
+            return a
+
+
 
     def loadImage(self):
         """ This function will load the user selected image
@@ -242,18 +310,44 @@ class Ui_MainWindow(object):
         self.histoHSV = getHistoHSV(self.lastImage)
         #self.histoHSV ={}
         #self.histoHSV[100] =50000
-        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
+
 
     def LaunchAnalogue(self):
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
         findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)
         
     def LaunchComplementaire(self):
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
         findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire finish")
+        self.setPhoto(self.image)
+    def LaunchComplAdjacente(self):      
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
+        findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
+        self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
+        print("Complementaire adjacente finish")
+        self.setPhoto(self.image)
+    def launchMonochromatique(self):
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
+        findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
+        self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
+        print("monochromatique finish")
+        self.setPhoto(self.image)
+    def launchDoubleCompl(self):
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
+        findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
+        self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
+        print("DoubleCompl finish")
+        self.setPhoto(self.image)
+    def launchTriadique(self):
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
+        findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
+        self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
+        print("triadique finish")
         self.setPhoto(self.image)
 
     def retranslateUi(self, MainWindow):
@@ -264,7 +358,11 @@ class Ui_MainWindow(object):
 
         self.retourButton.setText(_translate("MainWindow", "Retour"))
         self.AnalogueButton.setText(_translate("MainWindow", "Analogue"))
-        self.ComplementaireButton.setText(_translate("MainWindow", "Complementaire"))
+        self.ComplementaireButton.setText(_translate("MainWindow", "Complémentaire"))
+        self.ComplAdjButton.setText(_translate("MainWindow", "Complémentaire Adjacente"))
+        self.MonoButton.setText(_translate("MainWindow", "Monochromatique"))
+        self.triadiqueButton.setText(_translate("MainWindow", "Triadique"))
+        self.DoubleComplButton.setText(_translate("MainWindow", "Double Complementaire"))
 
 
 # Subscribe to PyShine Youtube channel for more detail! 
