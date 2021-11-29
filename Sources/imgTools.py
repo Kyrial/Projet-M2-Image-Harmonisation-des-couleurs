@@ -157,6 +157,21 @@ def vignette(colors):
     return img2
 
 
+def vignetteTEST(colors):
+    img2 = np.zeros((50,100,3),dtype=np.uint8)
+    imghsv2 = cv2.cvtColor(img2, cv2.COLOR_BGR2HSV)
+    for i in range(50):
+        for j in range(100):
+            imghsv2.itemset((i,j,1),colors[1])
+            imghsv2.itemset((i,j,2),colors[2])
+            #if j<(100//len(colors)):
+            imghsv2.itemset((i,j,0),colors[0])
+            #else:
+             #   imghsv2.itemset((i,j,0),colors[1])
+    img2 = cv2.cvtColor(imghsv2, cv2.COLOR_HSV2BGR)
+    return img2
+
+
 
 
 
