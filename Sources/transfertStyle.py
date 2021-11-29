@@ -10,11 +10,11 @@ from tensorflow.keras.applications import vgg19
 print("module chargé")
 
 filename = "cat3"
-styleName = "vert"
+styleName = "cat3"
 #styleName = "nuage"
 #styleName = "nuit-etoilee"
 #outputPath = "../Images/Outputs/transfert_de_style/blanc/"
-outputPath = "../Images/Outputs/transfert_de_style/chat_vert/"
+outputPath = "../Images/Outputs/transfert_de_style/chat_chat/"
 
 #image_path = keras.utils.get_file("paris.jpg", "https://i.imgur.com/F28w3Ac.jpg")
 image_path = "../Images/Inputs/"+filename+".jpg"
@@ -22,7 +22,7 @@ image_path = "../Images/Inputs/"+filename+".jpg"
 style_reference_image_path ="../Images/Inputs/"+styleName+".jpg"
 
 
-result_prefix = filename_styleName+"_generated"
+result_prefix = filename+"_"+styleName+"_generated"
 
 
 
