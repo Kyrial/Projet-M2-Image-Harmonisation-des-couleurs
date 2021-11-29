@@ -64,21 +64,22 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
 # pensez a rectifier si nécessaire pour les calculs
 ####
 
+
 #filename = "cat3"
-filename = "tulipes"
-img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
+#filename = "tulipes"
+#img = cv2.imread ("../Images/Inputs/"+filename+".jpg")
 #ImgIndex = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 
-histoHSV = getHistoHSV(img)
+#histoHSV = getHistoHSV(img)
 
 
-hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#hsvImage = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-findBestHarmonieAnalogue(histoHSV, hsvImage,False)
+#findBestHarmonieAnalogue(histoHSV, hsvImage,False)
 #findBestHarmonieTriad(histo, img)
 
-img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
+#img = cv2.cvtColor(hsvImage, cv2.COLOR_HSV2BGR)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_AnalogueHSV.jpg", hsvImage)
 #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge.jpg", img)
 

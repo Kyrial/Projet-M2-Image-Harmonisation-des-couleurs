@@ -5,6 +5,7 @@ import math
 from imgTools import *
 import string, os 
 from analogue_converge import *
+from complementaire_converge import *
 
 
 verbose = True
@@ -12,10 +13,10 @@ verbose = True
 
 
 
-import numpy
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-
+#import numpy
+#from PyQt5.QtGui import *
+#from PyQt5.QtCore import *
+#from PyQt5.QtWidgets import QMainWindow, QApplication
 
 
 
@@ -29,8 +30,9 @@ from PyQt5.QtCore import *
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog,QMenuBar, QMenu, QAction
 from PyQt5.QtGui import QImage
+
 import imutils
 
 class Ui_MainWindow(object):
@@ -65,13 +67,27 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        """
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout_2.addWidget(self.pushButton_2)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
+        """
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+
+        #layout harmonie
+        self.harmonieLayout = QtWidgets.QHBoxLayout()
+        self.harmonieLayout.setObjectName("harmonieLayout")
+        self.gridLayout.addLayout(self.harmonieLayout, 2, 0, 1, 1)
+        
+        #self.statusBar()
+        self._createMenuBar(MainWindow)
+
+
+
+
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
@@ -89,24 +105,45 @@ class Ui_MainWindow(object):
         #Bouton analogue
         self.AnalogueButton = QtWidgets.QPushButton(self.centralwidget)
         self.AnalogueButton.setObjectName("Analogue")
-        self.horizontalLayout_2.addWidget(self.AnalogueButton)
-
+        self.harmonieLayout.addWidget(self.AnalogueButton)
+        #Bouton Complementaire
+        self.ComplementaireButton = QtWidgets.QPushButton(self.centralwidget)
+        self.ComplementaireButton.setObjectName("Analogue")
+        self.harmonieLayout.addWidget(self.ComplementaireButton)
 
         self.retranslateUi(MainWindow)
         self.verticalSlider.valueChanged['int'].connect(self.brightness_value)
         self.verticalSlider_2.valueChanged['int'].connect(self.blur_value)
-        self.pushButton_2.clicked.connect(self.loadImage)
-        self.pushButton.clicked.connect(self.savePhoto)
+        #self.pushButton_2.clicked.connect(self.loadImage)
+        #self.pushButton.clicked.connect(self.savePhoto)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         #connection bouton
         self.retourButton.clicked.connect(self.resetImg)
         self.AnalogueButton.clicked.connect(self.LaunchAnalogue)
+        self.ComplementaireButton.clicked.connect(self.LaunchComplementaire)
         # Added code here
         self.filename = None # Will hold the image address location
         self.tmp = None # Will hold the temporary image for display
         self.brightness_value_now = 0 # Updated brightness value
         self.blur_value_now = 0 # Updated blur value
+
+    def _createMenuBar(self, MainWindow):
+        menuBar = MainWindow.menuBar()
+        # Creating menus using a QMenu object
+        fileMenu = QMenu("&File", MainWindow)
+        menuBar.addMenu(fileMenu)
+        MainWindow.openAction = QAction("&Open...", MainWindow)
+        MainWindow.saveAction = QAction("&Save", MainWindow)
+        fileMenu.addAction(MainWindow.saveAction)
+        fileMenu.addAction(MainWindow.openAction)
+
+        MainWindow.openAction.triggered.connect(self.loadImage)
+        MainWindow.saveAction.triggered.connect(self.savePhoto)
+
+        # Creating menus using a title
+        #editMenu = menuBar.addMenu("&Edit")
+        #helpMenu = menuBar.addMenu("&Help")
 
     def loadImage(self):
         """ This function will load the user selected image
@@ -202,10 +239,10 @@ class Ui_MainWindow(object):
         self.setPhoto(self.image)
    
     def pretraitement(self):
-        #self.histoHSV = getHistoHSV(self.image)
-        self.histoHSV ={}
-        self.histoHSV[100] =50000
-        self.hsvImage = cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV)
+        self.histoHSV = getHistoHSV(self.lastImage)
+        #self.histoHSV ={}
+        #self.histoHSV[100] =50000
+        self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
 
     def LaunchAnalogue(self):
         findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
@@ -213,16 +250,21 @@ class Ui_MainWindow(object):
         print("analogue finish")
         self.setPhoto(self.image)
         
+    def LaunchComplementaire(self):
+        findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
+        self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
+        print("Complementaire finish")
+        self.setPhoto(self.image)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Pyshine photo editor"))
-        self.pushButton_2.setText(_translate("MainWindow", "Open"))
-        self.pushButton.setText(_translate("MainWindow", "Save"))
+      #  self.pushButton_2.setText(_translate("MainWindow", "Open"))
+       # self.pushButton.setText(_translate("MainWindow", "Save"))
 
         self.retourButton.setText(_translate("MainWindow", "Retour"))
         self.AnalogueButton.setText(_translate("MainWindow", "Analogue"))
-
+        self.ComplementaireButton.setText(_translate("MainWindow", "Complementaire"))
 
 
 # Subscribe to PyShine Youtube channel for more detail! 
