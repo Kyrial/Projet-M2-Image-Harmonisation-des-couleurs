@@ -46,12 +46,20 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
         tupleTeinte.append(int((mode[0])+i)%180)
 
     dicodegrade = getDicoDegrade(tupleTeinte)
+
+    h,s,v = cv2.split(imgHSV)
+    
+    for i in range(len(dicodegrade)):
+        h[h==i]= dicodegrade[i]
+
+    """
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
            # print("\nappel fonction: ",tupleTeinte,imgHSV[i,j] )
             colorcurr = (imgHSV[i,j])
             #imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
             imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])
+    """
     couleurs = vignette(tupleTeinte)
     return imgHSV
     #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Analogue_converge_Vignette.jpg", couleurs)
