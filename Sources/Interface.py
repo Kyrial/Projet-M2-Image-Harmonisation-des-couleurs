@@ -90,11 +90,13 @@ class Ui_MainWindow(object):
         self.TexteLiderAnalogue = QtWidgets.QLabel(self.centralwidget)
         self.TexteLiderAnalogue.setText("écart analogue")
         self.TexteLiderAnalogue.setObjectName("écart analogue")
+        self.TexteLiderAnalogue.setStyleSheet("QLabel { color : grey; }")
 
         #slider analogue
         self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider.setRange(1,179)
+        self.horizontalSlider.setEnabled(False)
         self.horizontalSlider.setObjectName("analogue")
         #Layout for text and slider analogue
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
@@ -376,6 +378,8 @@ class Ui_MainWindow(object):
 
     def LaunchAnalogue(self):
         self.resetColorButton()
+        self.horizontalSlider.setEnabled(True)
+        self.TexteLiderAnalogue.setStyleSheet("QLabel { color : black; }")
         self.AnalogueButton.setStyleSheet("QPushButton"
                              "{"
                              "background-color : lightblue;"
@@ -499,6 +503,10 @@ class Ui_MainWindow(object):
                     "{"
                     "background-color : white;"
                     "}")
+        self.hideSlider()
+    def hideSlider(self):
+         self.horizontalSlider.setEnabled(False)
+         self.TexteLiderAnalogue.setStyleSheet("QLabel { color : grey; }")
 
 
 # Subscribe to PyShine Youtube channel for more detail! 
