@@ -57,7 +57,7 @@ def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
             imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])'''
 
     couleurs = vignette([mode[0],modecolorA,modecolorB])
-    return imgHSV
+    return imgHSV, couleurs
     #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_CompAdjacente_converge_Vignette.jpg", couleurs)
             
 

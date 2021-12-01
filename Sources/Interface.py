@@ -41,8 +41,9 @@ import imutils
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.loaded = False
         self.lastImage =0
-
+        self.vignette = 0
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(536, 571)
 
@@ -58,6 +59,17 @@ class Ui_MainWindow(object):
         self.label.setText("")
         #self.label.setPixmap(QtGui.QPixmap("images/2.jpg"))
         self.label.setObjectName("label")
+
+
+        self.vignetteLabel = QtWidgets.QLabel(self.centralwidget)
+        self.vignetteLabel.setText("meow")
+        #self.label.setPixmap(QtGui.QPixmap("images/2.jpg"))
+        self.vignetteLabel.setObjectName("vignetteLabel")
+        self.vignetteLayout = QtWidgets.QHBoxLayout()
+        self.vignetteLayout.setObjectName("vignetteLayout")
+        self.vignetteLayout.addWidget(self.vignetteLabel)
+        self.gridLayout.addLayout(self.vignetteLayout, 0, 2, 1, 1)
+
         self.horizontalLayout_3.addWidget(self.label)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -205,10 +217,10 @@ class Ui_MainWindow(object):
         return b
 
     def onClickAutoColor(self):
-        if self.colorAutoBtn.isChecked() and self.lastImage!=0:
+        if self.colorAutoBtn.isChecked() and self.loaded:
             self.pretraitement()
     def onClickPipette(self):
-        if self.pipetteBtn.isChecked()and self.lastImage!=0:
+        if self.pipetteBtn.isChecked() and self.loaded:
         
             # opening color dialog
             color = QColorDialog.getColor()
@@ -227,6 +239,7 @@ class Ui_MainWindow(object):
        
         self.filename = QFileDialog.getOpenFileName(filter="Image (*.*)")[0]
         if self.filename != "":
+            self.loaded = True
             self.connectButton()
             self.image = cv2.imread(self.filename)
             self.lastImage = cv2.imread(self.filename)
@@ -243,6 +256,13 @@ class Ui_MainWindow(object):
         image = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
         self.label.setPixmap(QtGui.QPixmap.fromImage(image))
     
+    def addVignette(self, vignette):
+        self.tmp = vignette
+        vignette = imutils.resize(vignette,width=100)
+        frame = cv2.cvtColor(vignette, cv2.COLOR_BGR2RGB)
+        vignette = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
+        self.vignetteLabel.setPixmap(QtGui.QPixmap.fromImage(vignette))
+
     def brightness_value(self,value):
         """ This function will take value from the slider
             for the brightness from 0 to 99
@@ -311,7 +331,7 @@ class Ui_MainWindow(object):
         cv2.imwrite(filename,self.tmp)
         print('Image saved as:',self.filename)
     
-    
+
     def resetImg(self):
         self.resetColorButton()
         self.image = self.lastImage
@@ -330,10 +350,11 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
         
     def LaunchComplementaire(self):
         self.resetColorButton()
@@ -342,10 +363,12 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+        
     def LaunchComplAdjacente(self): 
         self.resetColorButton()
         self.ComplAdjButton.setStyleSheet("QPushButton"
@@ -353,10 +376,12 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")     
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire adjacente finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
     def launchMonochromatique(self):
         self.resetColorButton()
         self.MonoButton.setStyleSheet("QPushButton"
@@ -364,10 +389,12 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("monochromatique finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
     def launchDoubleCompl(self):
         self.resetColorButton()
         self.DoubleComplButton.setStyleSheet("QPushButton"
@@ -375,10 +402,12 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("DoubleCompl finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
     def launchTriadique(self):
         self.resetColorButton()
         self.triadiqueButton.setStyleSheet("QPushButton"
@@ -386,10 +415,14 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("triadique finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
+
+    
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

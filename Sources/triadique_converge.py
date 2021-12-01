@@ -48,7 +48,7 @@ def findBestHarmonietriadique(histoHSV, imgHSV, verbose = True):
 #            imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
             imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])'''
     couleurs = vignette([mode[0],modet1,modet2])
-    return imgHSV
+    return imgHSV, couleurs
     #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Triadique_converge_Vignette.jpg", couleurs)
 
             
