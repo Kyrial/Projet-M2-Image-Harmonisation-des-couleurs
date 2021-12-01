@@ -112,6 +112,8 @@ class Ui_MainWindow(object):
         self.AnalogueButton = QtWidgets.QPushButton(self.centralwidget)
         self.AnalogueButton.setObjectName("Analogue")
         self.harmonieLayout.addWidget(self.AnalogueButton)
+
+
         #Bouton Complementaire
         self.ComplementaireButton = QtWidgets.QPushButton(self.centralwidget)
         self.ComplementaireButton.setObjectName("Complementaire")
@@ -305,6 +307,7 @@ class Ui_MainWindow(object):
     
     
     def resetImg(self):
+        self.resetColorButton()
         self.image = self.lastImage
         self.setPhoto(self.image)
    
@@ -315,40 +318,69 @@ class Ui_MainWindow(object):
 
 
     def LaunchAnalogue(self):
+        self.resetColorButton()
+        self.AnalogueButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
         self.hsvImage = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
-        print(self.hsvImage[0,0])
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)
         
     def LaunchComplementaire(self):
+        self.resetColorButton()
+        self.ComplementaireButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
         self.hsvImage = findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire finish")
         self.setPhoto(self.image)
-    def LaunchComplAdjacente(self):      
+    def LaunchComplAdjacente(self): 
+        self.resetColorButton()
+        self.ComplAdjButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")     
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire adjacente finish")
         self.setPhoto(self.image)
     def launchMonochromatique(self):
+        self.resetColorButton()
+        self.MonoButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("monochromatique finish")
         self.setPhoto(self.image)
     def launchDoubleCompl(self):
+        self.resetColorButton()
+        self.DoubleComplButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("DoubleCompl finish")
         self.setPhoto(self.image)
     def launchTriadique(self):
+        self.resetColorButton()
+        self.triadiqueButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("triadique finish")
         self.setPhoto(self.image)
@@ -366,6 +398,37 @@ class Ui_MainWindow(object):
         self.MonoButton.setText(_translate("MainWindow", "Monochromatique"))
         self.triadiqueButton.setText(_translate("MainWindow", "Triadique"))
         self.DoubleComplButton.setText(_translate("MainWindow", "Double Complementaire"))
+
+
+    def resetColorButton(self):
+        self.AnalogueButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.ComplementaireButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.ComplementaireButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.ComplAdjButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.MonoButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.triadiqueButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.DoubleComplButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
 
 
 # Subscribe to PyShine Youtube channel for more detail! 
