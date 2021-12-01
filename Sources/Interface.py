@@ -144,7 +144,16 @@ class Ui_MainWindow(object):
         #self.pushButton.clicked.connect(self.savePhoto)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        #connection bouton
+
+        # Added code here
+        self.filename = None # Will hold the image address location
+        self.tmp = None # Will hold the temporary image for display
+        self.brightness_value_now = 0 # Updated brightness value
+        self.blur_value_now = 0 # Updated blur value
+
+
+    def connectButton(self):
+                #connection bouton
         self.retourButton.clicked.connect(self.resetImg)
         self.AnalogueButton.clicked.connect(self.LaunchAnalogue)
         self.ComplementaireButton.clicked.connect(self.LaunchComplementaire)
@@ -152,12 +161,6 @@ class Ui_MainWindow(object):
         self.MonoButton.clicked.connect(self.launchMonochromatique)
         self.triadiqueButton.clicked.connect(self.launchTriadique)
         self.DoubleComplButton.clicked.connect(self.launchDoubleCompl)
-        
-        # Added code here
-        self.filename = None # Will hold the image address location
-        self.tmp = None # Will hold the temporary image for display
-        self.brightness_value_now = 0 # Updated brightness value
-        self.blur_value_now = 0 # Updated blur value
 
 
     def createRadioButton(self):
@@ -205,7 +208,7 @@ class Ui_MainWindow(object):
         if self.colorAutoBtn.isChecked() and self.lastImage!=0:
             self.pretraitement()
     def onClickPipette(self):
-        if self.pipetteBtn.isChecked():
+        if self.pipetteBtn.isChecked()and self.lastImage!=0:
         
             # opening color dialog
             color = QColorDialog.getColor()
@@ -221,11 +224,14 @@ class Ui_MainWindow(object):
         """ This function will load the user selected image
             and set it to label using the setPhoto function
         """
+       
         self.filename = QFileDialog.getOpenFileName(filter="Image (*.*)")[0]
-        self.image = cv2.imread(self.filename)
-        self.lastImage = cv2.imread(self.filename)
-        self.pretraitement()
-        self.setPhoto(self.image)
+        if self.filename != "":
+            self.connectButton()
+            self.image = cv2.imread(self.filename)
+            self.lastImage = cv2.imread(self.filename)
+            self.pretraitement()
+            self.setPhoto(self.image)
     def setPhoto(self,image):
         """ This function will take image input and resize it 
             only for display purpose and convert it to QImage
