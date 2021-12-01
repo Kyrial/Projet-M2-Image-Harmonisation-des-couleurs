@@ -48,11 +48,10 @@ def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
     dicodegrade = getDicoDegrade(tupleTeinte)
 
     h,s,v = cv2.split(imgHSV)
-    print(h[0])
     for i in range(len(dicodegrade)):
-        h[h==i]= dicodegrade[i]
-    print(h[0])
+        h[h==i] = dicodegrade[i]
     imgHSV = cv2.merge((h,s,v))
+
     """
     for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):

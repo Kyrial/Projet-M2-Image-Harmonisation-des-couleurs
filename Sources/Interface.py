@@ -41,6 +41,8 @@ import imutils
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.lastImage =0
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(536, 571)
 
@@ -198,7 +200,7 @@ class Ui_MainWindow(object):
         return b
 
     def onClickAutoColor(self):
-        if self.colorAutoBtn.isChecked():
+        if self.colorAutoBtn.isChecked() and self.lastImage!=0:
             self.pretraitement()
     def onClickPipette(self):
         if self.pipetteBtn.isChecked():
@@ -314,14 +316,15 @@ class Ui_MainWindow(object):
 
     def LaunchAnalogue(self):
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
+        print(self.hsvImage[0,0])
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)
         
     def LaunchComplementaire(self):
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire finish")
         self.setPhoto(self.image)
