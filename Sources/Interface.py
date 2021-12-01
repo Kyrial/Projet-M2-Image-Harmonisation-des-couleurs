@@ -73,6 +73,13 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
+        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setObjectName("analogue")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.horizontalLayout_4.addWidget(self.horizontalSlider)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 4, 1)
         """
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName("pushButton_2")
@@ -140,6 +147,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.verticalSlider.valueChanged['int'].connect(self.brightness_value)
         self.verticalSlider_2.valueChanged['int'].connect(self.blur_value)
+        self.horizontalSlider.valueChanged['int'].connect(self.analogue_value)
         #self.pushButton_2.clicked.connect(self.loadImage)
         #self.pushButton.clicked.connect(self.savePhoto)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -150,6 +158,7 @@ class Ui_MainWindow(object):
         self.tmp = None # Will hold the temporary image for display
         self.brightness_value_now = 0 # Updated brightness value
         self.blur_value_now = 0 # Updated blur value
+        self.analogue_value_now = 10 # Updated analogue value
 
 
     def connectButton(self):
@@ -258,6 +267,11 @@ class Ui_MainWindow(object):
         self.blur_value_now = value
         print('Blur: ',value)
         self.update()
+
+    def analogue_value(self,value):
+        self.analogue_value_now = value
+        print('équart analogue: ',value)
+        self.update()
     
     
     def changeBrightness(self,img,value):
@@ -281,6 +295,10 @@ class Ui_MainWindow(object):
         """
         kernel_size = (value+1,value+1) # +1 is to avoid 0
         img = cv2.blur(img,kernel_size)
+        return img
+#########################################################################################################################
+    def changeAnalogue(self,img,value):
+        img = cv2.analogue_converge(img,value)
         return img
     
     def update(self):
@@ -330,7 +348,7 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
+        self.hsvImage = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage, self.analogue_value, False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)

@@ -8,8 +8,8 @@ from imgTools import *
 
 
 
-def findBestHarmonieAnalogue(histoHSV, imgHSV, verbose = True):
-    ecart = 10
+def findBestHarmonieAnalogue(histoHSV, imgHSV, ecart, verbose = True):
+    #ecart = 10
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
