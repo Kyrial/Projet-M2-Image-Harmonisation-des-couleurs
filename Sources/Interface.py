@@ -85,13 +85,24 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        
+        #Text for slider
+        self.TexteLiderAnalogue = QtWidgets.QLabel(self.centralwidget)
+        self.TexteLiderAnalogue.setText("écart analogue")
+        self.TexteLiderAnalogue.setObjectName("écart analogue")
+
+        #slider analogue
         self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setRange(1,179)
         self.horizontalSlider.setObjectName("analogue")
+        #Layout for text and slider analogue
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.horizontalLayout_4.addWidget(self.TexteLiderAnalogue)
         self.horizontalLayout_4.addWidget(self.horizontalSlider)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 4, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_4,4, 0, 1 , 1)
+
         """
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName("pushButton_2")
@@ -291,7 +302,8 @@ class Ui_MainWindow(object):
     def analogue_value(self,value):
         self.analogue_value_now = value
         print('équart analogue: ',value)
-        self.update()
+        if(self.loaded):
+            self.LaunchAnalogue()
     
     
     def changeBrightness(self,img,value):
@@ -325,9 +337,10 @@ class Ui_MainWindow(object):
         """ This function will update the photo according to the 
             current values of blur and brightness and set it to photo label.
         """
-        img = self.changeBrightness(self.image,self.brightness_value_now)
-        img = self.changeBlur(img,self.blur_value_now)
-        self.setPhoto(img)
+        if(self.loaded):
+            img = self.changeBrightness(self.image,self.brightness_value_now)
+            img = self.changeBlur(img,self.blur_value_now)
+            self.setPhoto(img)
     
     def savePhoto(self):
         """ This function will save the image"""
@@ -368,7 +381,7 @@ class Ui_MainWindow(object):
                              "background-color : lightblue;"
                              "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage, self.vignette = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage, self.analogue_value, False)
+        self.hsvImage, self.vignette = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage, self.analogue_value_now, False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)
