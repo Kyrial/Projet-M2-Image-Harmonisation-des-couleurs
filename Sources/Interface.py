@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
 
 
         self.vignetteLabel = QtWidgets.QLabel(self.centralwidget)
-        self.vignetteLabel.setText("meow")
+        self.vignetteLabel.setText("")
         #self.label.setPixmap(QtGui.QPixmap("images/2.jpg"))
         self.vignetteLabel.setObjectName("vignetteLabel")
         self.vignetteLayout = QtWidgets.QHBoxLayout()
@@ -73,14 +73,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.label)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalSlider = QtWidgets.QSlider(self.centralwidget)
-        self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
-        self.verticalSlider.setObjectName("verticalSlider")
-        self.horizontalLayout.addWidget(self.verticalSlider)
-        self.verticalSlider_2 = QtWidgets.QSlider(self.centralwidget)
-        self.verticalSlider_2.setOrientation(QtCore.Qt.Vertical)
-        self.verticalSlider_2.setObjectName("verticalSlider_2")
-        self.horizontalLayout.addWidget(self.verticalSlider_2)
+        
         self.horizontalLayout_3.addLayout(self.horizontalLayout)
         self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -108,13 +101,15 @@ class Ui_MainWindow(object):
         #Text for slider
         self.TexteLiderAdjacente = QtWidgets.QLabel(self.centralwidget)
         self.TexteLiderAdjacente.setText("écart adjacente")
-        self.TexteLiderAdjacente.setObjectName("écart analogue")
+        self.TexteLiderAdjacente.setObjectName("écart adjacente")
+        self.TexteLiderAdjacente.setStyleSheet("QLabel { color : grey; }")
 
         #slider adjacente
         self.horizontalSlider2 = QtWidgets.QSlider(self.centralwidget)
         self.horizontalSlider2.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSlider2.setRange(1,179)
-        self.horizontalSlider2.setObjectName("adjacene")
+        self.horizontalSlider2.setRange(1,90)
+        self.horizontalSlider2.setEnabled(False)
+        self.horizontalSlider2.setObjectName("adjacente")
         #Layout for text and slider adjacente
         self.horizontalLayout_4.addWidget(self.TexteLiderAdjacente)
         self.horizontalLayout_4.addWidget(self.horizontalSlider2)
@@ -138,7 +133,16 @@ class Ui_MainWindow(object):
         self._createMenuBar(MainWindow)
         #bouton radio couleur
         self.createRadioButton()
-
+        """
+        #text CreatedBy
+        self.createdby = QtWidgets.QLabel(self.centralwidget)
+        self.createdby.setText("Created by Laurine JAFFRET and Melvin BARDIN")
+        #layout CreatebBy
+        self.createdbyLayout = QtWidgets.QHBoxLayout()
+        self.createdbyLayout.setObjectName("createdBy")
+        self.gridLayout.addLayout(self.createdbyLayout, 5, 0, 1, 1)
+        self.createdbyLayout.addWidget(self.createdby)
+        """
 
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
@@ -184,8 +188,6 @@ class Ui_MainWindow(object):
 
 
         self.retranslateUi(MainWindow)
-        self.verticalSlider.valueChanged['int'].connect(self.brightness_value)
-        self.verticalSlider_2.valueChanged['int'].connect(self.blur_value)
         self.horizontalSlider.valueChanged['int'].connect(self.analogue_value)
         self.horizontalSlider2.valueChanged['int'].connect(self.adjacente_value)
         #self.pushButton_2.clicked.connect(self.loadImage)
@@ -196,8 +198,6 @@ class Ui_MainWindow(object):
         # Added code here
         self.filename = None # Will hold the image address location
         self.tmp = None # Will hold the temporary image for display
-        self.brightness_value_now = 0 # Updated brightness value
-        self.blur_value_now = 0 # Updated blur value
         self.analogue_value_now = 10 # Updated analogue value
         self.adjacente_value_now = 10 # Updated adjacente value
 
@@ -301,27 +301,12 @@ class Ui_MainWindow(object):
         vignette = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
         self.vignetteLabel.setPixmap(QtGui.QPixmap.fromImage(vignette))
 
-    def brightness_value(self,value):
-        """ This function will take value from the slider
-            for the brightness from 0 to 99
-        """
-        self.brightness_value_now = value
-        print('Brightness: ',value)
-        self.update()
-        
-        
-    def blur_value(self,value):
-        """ This function will take value from the slider 
-            for the blur from 0 to 99 """
-        self.blur_value_now = value
-        print('Blur: ',value)
-        self.update()
 
     def analogue_value(self,value):
         self.analogue_value_now = value
         print('équart analogue: ',value)
         if(self.loaded):
-            self.LaunchAdjacente()
+            self.LaunchAnalogue()
 
     def adjacente_value(self,value):
         self.adjacente_value_now = value
@@ -432,12 +417,14 @@ class Ui_MainWindow(object):
         
     def LaunchComplAdjacente(self): 
         self.resetColorButton()
+        self.horizontalSlider2.setEnabled(True)
+        self.TexteLiderAdjacente.setStyleSheet("QLabel { color : black; }")
         self.ComplAdjButton.setStyleSheet("QPushButton"
                              "{"
                              "background-color : lightblue;"
                              "}")     
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        self.hsvImage, self.vignette = findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,self.adjacente_value_now,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire adjacente finish")
         self.setPhoto(self.image)
@@ -531,9 +518,11 @@ class Ui_MainWindow(object):
                     "}")
         self.hideSlider()
     def hideSlider(self):
-         self.horizontalSlider.setEnabled(False)
-         self.TexteLiderAnalogue.setStyleSheet("QLabel { color : grey; }")
+        self.horizontalSlider.setEnabled(False)
+        self.TexteLiderAnalogue.setStyleSheet("QLabel { color : grey; }")
 
+        self.horizontalSlider2.setEnabled(False)
+        self.TexteLiderAdjacente.setStyleSheet("QLabel { color : grey; }")
 
 # Subscribe to PyShine Youtube channel for more detail! 
 

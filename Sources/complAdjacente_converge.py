@@ -5,7 +5,7 @@ from imgTools import *
 
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieComplAdj(histoHSV, imgHSV, ecart, verbose = True):
+def findBestHarmonieComplAdj(histoHSV, imgHSV, ecart=10, verbose = True):
     #ecart = 10
     #le mode correspond a un p
     #mode = couleur, occurance 
