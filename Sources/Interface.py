@@ -103,6 +103,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.horizontalSlider)
         self.gridLayout.addLayout(self.horizontalLayout_4,4, 0, 1 , 1)
 
+        #Text for slider
+        self.TexteLiderAdjacente = QtWidgets.QLabel(self.centralwidget)
+        self.TexteLiderAdjacente.setText("écart adjacente")
+        self.TexteLiderAdjacente.setObjectName("écart analogue")
+
+        #slider adjacente
+        self.horizontalSlider2 = QtWidgets.QSlider(self.centralwidget)
+        self.horizontalSlider2.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider2.setRange(1,179)
+        self.horizontalSlider2.setObjectName("adjacene")
+        #Layout for text and slider adjacente
+        self.horizontalLayout_4.addWidget(self.TexteLiderAdjacente)
+        self.horizontalLayout_4.addWidget(self.horizontalSlider2)
+
         """
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName("pushButton_2")
@@ -171,6 +185,7 @@ class Ui_MainWindow(object):
         self.verticalSlider.valueChanged['int'].connect(self.brightness_value)
         self.verticalSlider_2.valueChanged['int'].connect(self.blur_value)
         self.horizontalSlider.valueChanged['int'].connect(self.analogue_value)
+        self.horizontalSlider2.valueChanged['int'].connect(self.adjacente_value)
         #self.pushButton_2.clicked.connect(self.loadImage)
         #self.pushButton.clicked.connect(self.savePhoto)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -182,6 +197,7 @@ class Ui_MainWindow(object):
         self.brightness_value_now = 0 # Updated brightness value
         self.blur_value_now = 0 # Updated blur value
         self.analogue_value_now = 10 # Updated analogue value
+        self.adjacente_value_now = 10 # Updated adjacente value
 
 
     def connectButton(self):
@@ -303,7 +319,13 @@ class Ui_MainWindow(object):
         self.analogue_value_now = value
         print('équart analogue: ',value)
         if(self.loaded):
-            self.LaunchAnalogue()
+            self.LaunchAdjacente()
+
+    def adjacente_value(self,value):
+        self.adjacente_value_now = value
+        print('équart adjacente: ',value)
+        if(self.loaded):
+            self.LaunchComplAdjacente()
     
     
     def changeBrightness(self,img,value):
@@ -328,9 +350,13 @@ class Ui_MainWindow(object):
         kernel_size = (value+1,value+1) # +1 is to avoid 0
         img = cv2.blur(img,kernel_size)
         return img
-#########################################################################################################################
+
     def changeAnalogue(self,img,value):
         img = cv2.analogue_converge(img,value)
+        return img
+
+    def changeAdjacent(self,img,value):
+        img = cv2.complAdjacente_converge(img,value)
         return img
     
     def update(self):
