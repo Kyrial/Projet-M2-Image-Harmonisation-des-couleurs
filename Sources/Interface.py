@@ -41,6 +41,9 @@ import imutils
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        self.loaded = False
+        self.lastImage =0
+        self.vignette = 0
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(536, 571)
 
@@ -56,21 +59,61 @@ class Ui_MainWindow(object):
         self.label.setText("")
         #self.label.setPixmap(QtGui.QPixmap("images/2.jpg"))
         self.label.setObjectName("label")
+
+
+        self.vignetteLabel = QtWidgets.QLabel(self.centralwidget)
+        self.vignetteLabel.setText("")
+        #self.label.setPixmap(QtGui.QPixmap("images/2.jpg"))
+        self.vignetteLabel.setObjectName("vignetteLabel")
+        self.vignetteLayout = QtWidgets.QHBoxLayout()
+        self.vignetteLayout.setObjectName("vignetteLayout")
+        self.vignetteLayout.addWidget(self.vignetteLabel)
+        self.gridLayout.addLayout(self.vignetteLayout, 0, 2, 1, 1)
+
         self.horizontalLayout_3.addWidget(self.label)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalSlider = QtWidgets.QSlider(self.centralwidget)
-        self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
-        self.verticalSlider.setObjectName("verticalSlider")
-        self.horizontalLayout.addWidget(self.verticalSlider)
-        self.verticalSlider_2 = QtWidgets.QSlider(self.centralwidget)
-        self.verticalSlider_2.setOrientation(QtCore.Qt.Vertical)
-        self.verticalSlider_2.setObjectName("verticalSlider_2")
-        self.horizontalLayout.addWidget(self.verticalSlider_2)
+        
         self.horizontalLayout_3.addLayout(self.horizontalLayout)
         self.gridLayout.addLayout(self.horizontalLayout_3, 0, 0, 1, 2)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        
+        #Text for slider
+        self.TexteLiderAnalogue = QtWidgets.QLabel(self.centralwidget)
+        self.TexteLiderAnalogue.setText("écart analogue")
+        self.TexteLiderAnalogue.setObjectName("écart analogue")
+        self.TexteLiderAnalogue.setStyleSheet("QLabel { color : grey; }")
+
+        #slider analogue
+        self.horizontalSlider = QtWidgets.QSlider(self.centralwidget)
+        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setRange(1,179)
+        self.horizontalSlider.setEnabled(False)
+        self.horizontalSlider.setObjectName("analogue")
+        #Layout for text and slider analogue
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.horizontalLayout_4.addWidget(self.TexteLiderAnalogue)
+        self.horizontalLayout_4.addWidget(self.horizontalSlider)
+        self.gridLayout.addLayout(self.horizontalLayout_4,4, 0, 1 , 1)
+
+        #Text for slider
+        self.TexteLiderAdjacente = QtWidgets.QLabel(self.centralwidget)
+        self.TexteLiderAdjacente.setText("écart adjacente")
+        self.TexteLiderAdjacente.setObjectName("écart adjacente")
+        self.TexteLiderAdjacente.setStyleSheet("QLabel { color : grey; }")
+
+        #slider adjacente
+        self.horizontalSlider2 = QtWidgets.QSlider(self.centralwidget)
+        self.horizontalSlider2.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider2.setRange(1,90)
+        self.horizontalSlider2.setEnabled(False)
+        self.horizontalSlider2.setObjectName("adjacente")
+        #Layout for text and slider adjacente
+        self.horizontalLayout_4.addWidget(self.TexteLiderAdjacente)
+        self.horizontalLayout_4.addWidget(self.horizontalSlider2)
+
         """
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName("pushButton_2")
@@ -90,7 +133,16 @@ class Ui_MainWindow(object):
         self._createMenuBar(MainWindow)
         #bouton radio couleur
         self.createRadioButton()
-
+        """
+        #text CreatedBy
+        self.createdby = QtWidgets.QLabel(self.centralwidget)
+        self.createdby.setText("Created by Laurine JAFFRET and Melvin BARDIN")
+        #layout CreatebBy
+        self.createdbyLayout = QtWidgets.QHBoxLayout()
+        self.createdbyLayout.setObjectName("createdBy")
+        self.gridLayout.addLayout(self.createdbyLayout, 5, 0, 1, 1)
+        self.createdbyLayout.addWidget(self.createdby)
+        """
 
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
@@ -110,6 +162,8 @@ class Ui_MainWindow(object):
         self.AnalogueButton = QtWidgets.QPushButton(self.centralwidget)
         self.AnalogueButton.setObjectName("Analogue")
         self.harmonieLayout.addWidget(self.AnalogueButton)
+
+
         #Bouton Complementaire
         self.ComplementaireButton = QtWidgets.QPushButton(self.centralwidget)
         self.ComplementaireButton.setObjectName("Complementaire")
@@ -134,13 +188,22 @@ class Ui_MainWindow(object):
 
 
         self.retranslateUi(MainWindow)
-        self.verticalSlider.valueChanged['int'].connect(self.brightness_value)
-        self.verticalSlider_2.valueChanged['int'].connect(self.blur_value)
+        self.horizontalSlider.valueChanged['int'].connect(self.analogue_value)
+        self.horizontalSlider2.valueChanged['int'].connect(self.adjacente_value)
         #self.pushButton_2.clicked.connect(self.loadImage)
         #self.pushButton.clicked.connect(self.savePhoto)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        #connection bouton
+
+        # Added code here
+        self.filename = None # Will hold the image address location
+        self.tmp = None # Will hold the temporary image for display
+        self.analogue_value_now = 10 # Updated analogue value
+        self.adjacente_value_now = 10 # Updated adjacente value
+
+
+    def connectButton(self):
+                #connection bouton
         self.retourButton.clicked.connect(self.resetImg)
         self.AnalogueButton.clicked.connect(self.LaunchAnalogue)
         self.ComplementaireButton.clicked.connect(self.LaunchComplementaire)
@@ -148,12 +211,6 @@ class Ui_MainWindow(object):
         self.MonoButton.clicked.connect(self.launchMonochromatique)
         self.triadiqueButton.clicked.connect(self.launchTriadique)
         self.DoubleComplButton.clicked.connect(self.launchDoubleCompl)
-        
-        # Added code here
-        self.filename = None # Will hold the image address location
-        self.tmp = None # Will hold the temporary image for display
-        self.brightness_value_now = 0 # Updated brightness value
-        self.blur_value_now = 0 # Updated blur value
 
 
     def createRadioButton(self):
@@ -198,10 +255,10 @@ class Ui_MainWindow(object):
         return b
 
     def onClickAutoColor(self):
-        if self.colorAutoBtn.isChecked():
+        if self.colorAutoBtn.isChecked() and self.loaded:
             self.pretraitement()
     def onClickPipette(self):
-        if self.pipetteBtn.isChecked():
+        if self.pipetteBtn.isChecked() and self.loaded:
         
             # opening color dialog
             color = QColorDialog.getColor()
@@ -217,11 +274,15 @@ class Ui_MainWindow(object):
         """ This function will load the user selected image
             and set it to label using the setPhoto function
         """
+       
         self.filename = QFileDialog.getOpenFileName(filter="Image (*.*)")[0]
-        self.image = cv2.imread(self.filename)
-        self.lastImage = cv2.imread(self.filename)
-        self.pretraitement()
-        self.setPhoto(self.image)
+        if self.filename != "":
+            self.loaded = True
+            self.connectButton()
+            self.image = cv2.imread(self.filename)
+            self.lastImage = cv2.imread(self.filename)
+            self.pretraitement()
+            self.setPhoto(self.image)
     def setPhoto(self,image):
         """ This function will take image input and resize it 
             only for display purpose and convert it to QImage
@@ -233,21 +294,25 @@ class Ui_MainWindow(object):
         image = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
         self.label.setPixmap(QtGui.QPixmap.fromImage(image))
     
-    def brightness_value(self,value):
-        """ This function will take value from the slider
-            for the brightness from 0 to 99
-        """
-        self.brightness_value_now = value
-        print('Brightness: ',value)
-        self.update()
-        
-        
-    def blur_value(self,value):
-        """ This function will take value from the slider 
-            for the blur from 0 to 99 """
-        self.blur_value_now = value
-        print('Blur: ',value)
-        self.update()
+    def addVignette(self, vignette):
+        self.tmp = vignette
+        vignette = imutils.resize(vignette,width=100)
+        frame = cv2.cvtColor(vignette, cv2.COLOR_BGR2RGB)
+        vignette = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
+        self.vignetteLabel.setPixmap(QtGui.QPixmap.fromImage(vignette))
+
+
+    def analogue_value(self,value):
+        self.analogue_value_now = value
+        print('équart analogue: ',value)
+        if(self.loaded):
+            self.LaunchAnalogue()
+
+    def adjacente_value(self,value):
+        self.adjacente_value_now = value
+        print('équart adjacente: ',value)
+        if(self.loaded):
+            self.LaunchComplAdjacente()
     
     
     def changeBrightness(self,img,value):
@@ -272,14 +337,23 @@ class Ui_MainWindow(object):
         kernel_size = (value+1,value+1) # +1 is to avoid 0
         img = cv2.blur(img,kernel_size)
         return img
+
+    def changeAnalogue(self,img,value):
+        img = cv2.analogue_converge(img,value)
+        return img
+
+    def changeAdjacent(self,img,value):
+        img = cv2.complAdjacente_converge(img,value)
+        return img
     
     def update(self):
         """ This function will update the photo according to the 
             current values of blur and brightness and set it to photo label.
         """
-        img = self.changeBrightness(self.image,self.brightness_value_now)
-        img = self.changeBlur(img,self.blur_value_now)
-        self.setPhoto(img)
+        if(self.loaded):
+            img = self.changeBrightness(self.image,self.brightness_value_now)
+            img = self.changeBlur(img,self.blur_value_now)
+            self.setPhoto(img)
     
     def savePhoto(self):
         """ This function will save the image"""
@@ -301,8 +375,9 @@ class Ui_MainWindow(object):
         cv2.imwrite(filename,self.tmp)
         print('Image saved as:',self.filename)
     
-    
+
     def resetImg(self):
+        self.resetColorButton()
         self.image = self.lastImage
         self.setPhoto(self.image)
    
@@ -313,42 +388,89 @@ class Ui_MainWindow(object):
 
 
     def LaunchAnalogue(self):
+        self.resetColorButton()
+        self.horizontalSlider.setEnabled(True)
+        self.TexteLiderAnalogue.setStyleSheet("QLabel { color : black; }")
+        self.AnalogueButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieAnalogue(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieAnalogue(self.histoHSV, self.hsvImage, self.analogue_value_now, False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("analogue finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
         
     def LaunchComplementaire(self):
+        self.resetColorButton()
+        self.ComplementaireButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire finish")
         self.setPhoto(self.image)
-    def LaunchComplAdjacente(self):      
+        self.addVignette(self.vignette)
+        
+    def LaunchComplAdjacente(self): 
+        self.resetColorButton()
+        self.horizontalSlider2.setEnabled(True)
+        self.TexteLiderAdjacente.setStyleSheet("QLabel { color : black; }")
+        self.ComplAdjButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")     
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieComplAdj(self.histoHSV, self.hsvImage,self.adjacente_value_now,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("Complementaire adjacente finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
     def launchMonochromatique(self):
+        self.resetColorButton()
+        self.MonoButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieMono(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("monochromatique finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
     def launchDoubleCompl(self):
+        self.resetColorButton()
+        self.DoubleComplButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonieDoubleCompl(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("DoubleCompl finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
     def launchTriadique(self):
+        self.resetColorButton()
+        self.triadiqueButton.setStyleSheet("QPushButton"
+                             "{"
+                             "background-color : lightblue;"
+                             "}")
         self.hsvImage = cv2.cvtColor(self.lastImage, cv2.COLOR_BGR2HSV)
-        findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
+        self.hsvImage, self.vignette = findBestHarmonietriadique(self.histoHSV, self.hsvImage,False)
         self.image = cv2.cvtColor(self.hsvImage, cv2.COLOR_HSV2BGR)
         print("triadique finish")
         self.setPhoto(self.image)
+        self.addVignette(self.vignette)
+
+
+    
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -364,6 +486,43 @@ class Ui_MainWindow(object):
         self.triadiqueButton.setText(_translate("MainWindow", "Triadique"))
         self.DoubleComplButton.setText(_translate("MainWindow", "Double Complementaire"))
 
+
+    def resetColorButton(self):
+        self.AnalogueButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.ComplementaireButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.ComplementaireButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.ComplAdjButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.MonoButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.triadiqueButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.DoubleComplButton.setStyleSheet("QPushButton"
+                    "{"
+                    "background-color : white;"
+                    "}")
+        self.hideSlider()
+    def hideSlider(self):
+        self.horizontalSlider.setEnabled(False)
+        self.TexteLiderAnalogue.setStyleSheet("QLabel { color : grey; }")
+
+        self.horizontalSlider2.setEnabled(False)
+        self.TexteLiderAdjacente.setStyleSheet("QLabel { color : grey; }")
 
 # Subscribe to PyShine Youtube channel for more detail! 
 

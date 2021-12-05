@@ -5,8 +5,8 @@ from imgTools import *
 
 
 #trouve la meilleurs harmonisation et effectue la modification de l'image
-def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
-    ecart = 10
+def findBestHarmonieComplAdj(histoHSV, imgHSV, ecart=10, verbose = True):
+    #ecart = 10
     #le mode correspond a un p
     #mode = couleur, occurance 
     mode = (0,0)
@@ -37,14 +37,27 @@ def findBestHarmonieComplAdj(histoHSV, imgHSV, verbose = True):
     tupleTeinte = [int(modecolorA),int(mode[0]),int(modecolorB)]
     dicodegrade = getDicoDegrade(tupleTeinte)
     #on harmonise les couleur de l'image
-    for i in range(0,imgHSV.shape[0]):
+
+
+    h,s,v = cv2.split(imgHSV)
+    for i in range(len(dicodegrade)):
+        h[h==i] = dicodegrade[i]
+    imgHSV = cv2.merge((h,s,v))
+
+
+
+
+
+
+    '''for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
             #on modifie les pixel courant            
             colorcurr = (imgHSV[i,j])
             #imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
-            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])
+            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])'''
 
     couleurs = vignette([mode[0],modecolorA,modecolorB])
+    return imgHSV, couleurs
     #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_CompAdjacente_converge_Vignette.jpg", couleurs)
             
 

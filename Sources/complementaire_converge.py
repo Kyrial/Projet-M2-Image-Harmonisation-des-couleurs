@@ -34,13 +34,21 @@ def findBestHarmonieCompl(histoHSV, imgHSV, verbose = True):
     value = mode[0]
     tupleTeinte = [int(modeCompl),int(value)]
     dicodegrade = getDicoDegrade(tupleTeinte)
-    for i in range(0,imgHSV.shape[0]):
+
+    h,s,v = cv2.split(imgHSV)
+    for i in range(len(dicodegrade)):
+        h[h==i] = dicodegrade[i]
+    imgHSV = cv2.merge((h,s,v))
+
+
+    '''for i in range(0,imgHSV.shape[0]):
         for j in range(0,imgHSV.shape[1]):
            # print("\nappel fonction: ",tupleTeinte,imgHSV[i,j] )
             colorcurr = (imgHSV[i,j])
             #imgHSV.itemset((i,j,0),   getColor_Degrader(tupleTeinte,colorcurr ))
-            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])
+            imgHSV.itemset((i,j,0),   dicodegrade[colorcurr[0]])'''
     couleurs = vignette([mode[0],modeCompl])
+    return imgHSV, couleurs
     #cv2.imwrite("../Images/Outputs/"+filename+"/"+filename+"_Compl_converge_Vignette.jpg", couleurs)
             
 
