@@ -39,13 +39,18 @@ import colorsys
 
 import imutils
 
+
+print("module chargé")
+
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        print("start")
         self.loaded = False
         self.lastImage =0
         self.vignette = 0
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(536, 571)
+        MainWindow.resize(536, 471)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -289,13 +294,13 @@ class Ui_MainWindow(object):
             to set at the label.
         """
         self.tmp = image
-        image = imutils.resize(image,width=640)
+        image = imutils.resize(image,width=550)
         frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
         self.label.setPixmap(QtGui.QPixmap.fromImage(image))
     
     def addVignette(self, vignette):
-        self.tmp = vignette
+        
         vignette = imutils.resize(vignette,width=100)
         frame = cv2.cvtColor(vignette, cv2.COLOR_BGR2RGB)
         vignette = QImage(frame, frame.shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
