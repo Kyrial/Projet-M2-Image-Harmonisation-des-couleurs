@@ -8,9 +8,9 @@ projet de Melvin BARDIN et Laurine JAFFRET
 python 3.7.12, python 3.6.9
 
 
-#Comment installer les librairies utilisées
+# Comment installer les librairies utilisées
 
-#Pour l'application:
+# Pour l'application:
 
 pip install opencv-python
 pip install pillow
@@ -19,16 +19,16 @@ pip install PyQt5
 pip install imutils
 
 
-#Pour le transfert de style avec deep learning:
+# Pour le transfert de style avec deep learning:
 
 pip install tensorflow==2.0
 
 
-#Si probleme de version entre OpenCV et Qt:
+# Si probleme de version entre OpenCV et Qt:
 
 install opencv-python==4.1.1.26
 
-#Application Principale:
+# Application Principale:
 
 Executer "Interface.py"
 
@@ -39,7 +39,7 @@ Executer "Interface.py"
     - choix de l'utilisateur à l'aide du cercle chromatique
     - choix automatique, l'application choisis la couleurs dominante la plus adapté.
 
-#Scripts deepLearning de transfert de couleur:
+# Scripts deepLearning de transfert de couleur:
 
 Executer "transfertStyle.py"
 
